@@ -1,0 +1,18 @@
+node_modules
+.env
+package-lock.json
+.DS_Store
+
+resources
+
+logs
+
+logs/combined.log
+
+#Environment
+.env
+
+
+# npm 
+package-lock.json
+pnpm-workspace.yaml

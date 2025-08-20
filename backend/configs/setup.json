@@ -1,0 +1,986 @@
+{
+  "setting": {
+    "id": 627,
+    "brand_name": "Unimomo",
+    "brand_logo": "https://res.cloudinary.com/dx9n8tsyu/image/upload/v1616740134/General_Asahi_Logo",
+    "brand_favicon": "https://res.cloudinary.com/dx9n8tsyu/image/upload/v1616740134/General_Asahi_Logo",
+    "email": "technirvana@gmail.com",
+    "primary_phone": "9800000000",
+    "secondary_phone": "9000000000",
+    "fav_icon": "https://res.cloudinary.com/dx9n8tsyu/image/upload/v1616740134/General_Asahi_Logo",
+    "brandingImage": "https://res.cloudinary.com/dx9n8tsyu/image/upload/v1616740134/General_Asahi_Logo",
+    "brandingFooterImage": "https://res.cloudinary.com/dx9n8tsyu/image/upload/v1616740134/General_Asahi_Logo",
+    "address": "Jhamshikhel, Lalitpur",
+    "footer_desc": "Tech Nirvana",
+    "google_analytics": "UA-123456789"
+  },
+  "mediaCategory": [
+    {
+      "id": 354,
+      "name": "rich text editor",
+      "slug": "rich-text-editor"
+    },
+    {
+      "id": 777,
+      "name": "customer",
+      "slug": "customer"
+    }
+  ],
+  "banner": [
+    {
+      "id": "167",
+      "name": "Home Banner",
+      "slug": "home-banner",
+      "responsiveSettings": "",
+      "sliderSettings": "",
+      "bannerItems": [
+        {
+          "id": "267",
+          "bannerId": "167",
+          "image": "/test",
+          "caption": "Banner",
+          "title": "Unimomo",
+          "subTitle": "Unimomo",
+          "primaryButton": "",
+          "primaryButtonUrl": "",
+          "secondaryButton": "",
+          "secondaryButtonUrl": ""
+        }
+      ]
+    },
+    {
+      "id": "168",
+      "name": "Generic Banner",
+      "slug": "generic",
+      "responsiveSettings": "",
+      "sliderSettings": "",
+      "bannerItems": [
+        {
+          "id": "269",
+          "bannerId": "168",
+          "image": "/test",
+          "caption": "Banner",
+          "title": "Unimomo Generic Banner",
+          "subTitle": "Unimomo Generic Banner",
+          "primaryButton": "",
+          "primaryButtonUrl": "",
+          "secondaryButton": "",
+          "secondaryButtonUrl": ""
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "superadmin",
+      "password": "$2a$10$zUM6bKxyDDHPEgaLjshFNOGrsChiAt4/QPs7w3OdWXnvNlxvlt0L6",
+      "firstName": "Super",
+      "lastName": "admin",
+      "email": "superadmin@technirvana.com.np",
+      "gender": "male",
+      "mobileNo": "9841234567",
+      "mobilePrefix": "+977"
+    },
+    {
+      "username": "admin",
+      "password": "$2a$10$zUM6bKxyDDHPEgaLjshFNOGrsChiAt4/QPs7w3OdWXnvNlxvlt0L6",
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@technirvana.com.np",
+      "gender": "male",
+      "supervisorId": 1,
+      "mobileNo": "9841234567",
+      "mobilePrefix": "+977"
+    }
+  ],
+  "roles": [
+    {
+      "title": "Super Admin",
+      "roleType": "developer"
+    },
+    {
+      "title": "Admin",
+      "roleType": "admin"
+    }
+  ],
+  "roleMenus": [
+    {
+      "title": "User",
+      "key": "user",
+      "actions": [
+        {
+          "title": "View User",
+          "key": "view",
+          "clientPath": "/auth/list",
+          "serverPath": "/auth/list",
+          "requestMethod": "GET",
+          "list": "Users"
+        },
+        {
+          "title": "View Single User",
+          "key": "view-single",
+          "clientPath": "/auth/:id",
+          "serverPath": "/auth/:id",
+          "requestMethod": "GET",
+          "list": "Users"
+        },
+        {
+          "title": "Add User",
+          "key": "add",
+          "clientPath": "/auth/create",
+          "serverPath": "/auth/create",
+          "requestMethod": "POST",
+          "list": "Users"
+        },
+        {
+          "title": "Change Password",
+          "key": "change-password",
+          "clientPath": "/auth/change-password",
+          "serverPath": "/auth/change-password",
+          "requestMethod": "PUT",
+          "list": "Users"
+        },
+        {
+          "title": "Reset Password",
+          "key": "reset-password",
+          "clientPath": "/auth/reset-password/:id",
+          "serverPath": "/auth/reset-password/:id",
+          "requestMethod": "PUT",
+          "list": "Users"
+        },
+        {
+          "title": "Edit User",
+          "key": "edit",
+          "clientPath": "/auth/:id",
+          "serverPath": "/auth/:id",
+          "requestMethod": "PUT",
+          "list": "Users"
+        },
+        {
+          "title": "Delete User",
+          "key": "delete",
+          "clientPath": "/auth/:id",
+          "serverPath": "/auth/:id",
+          "requestMethod": "DELETE",
+          "list": "Users"
+        },
+        {
+          "title": "Edit User",
+          "key": "toggle-isActive",
+          "clientPath": "/auth/:id",
+          "serverPath": "/auth/:id",
+          "requestMethod": "PATCH",
+          "list": "Users"
+        }
+      ]
+    },
+    {
+      "title": "Roles",
+      "key": "role",
+      "actions": [
+        {
+          "title": "View Roles",
+          "key": "view",
+          "clientPath": "/roles/list",
+          "serverPath": "/roles/list",
+          "requestMethod": "GET",
+          "list": "Roles"
+        },
+        {
+          "title": "View Single Role",
+          "key": "view-single",
+          "clientPath": "/roles/:id",
+          "serverPath": "/roles/:id",
+          "requestMethod": "GET",
+          "list": "Roles"
+        },
+        {
+          "title": "Add Roles",
+          "key": "add",
+          "clientPath": "/roles",
+          "serverPath": "/roles",
+          "requestMethod": "POST",
+          "list": "Roles"
+        },
+        {
+          "title": "Edit Roles",
+          "key": "edit",
+          "clientPath": "/roles/:id",
+          "serverPath": "/roles/:id",
+          "requestMethod": "PUT",
+          "list": "Roles"
+        },
+        {
+          "title": "Delete Roles",
+          "key": "delete",
+          "clientPath": "/roles/:id",
+          "serverPath": "/roles/:id",
+          "requestMethod": "DELETE",
+          "list": "Roles"
+        }
+      ]
+    },
+    {
+      "title": "Access Module",
+      "key": "accessModule",
+      "actions": [
+        {
+          "title": "View Roles Action ",
+          "key": "view-role-action",
+          "clientPath": "/access-module/role-actions",
+          "serverPath": "/access-module/role-actions",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        },
+        {
+          "title": "View Access Module",
+          "key": "view-access-module",
+          "clientPath": "/access-module",
+          "serverPath": "/access-module",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        },
+        {
+          "title": "View One Access Module",
+          "key": "view-one-access-module",
+          "clientPath": "/access-module/:id",
+          "serverPath": "/access-module/:id",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        },
+        {
+          "title": "View  Roles Menu Action",
+          "key": "view",
+          "clientPath": "/access-module/role-menu-action/list",
+          "serverPath": "/access-module/role-menu-action/list",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        },
+        {
+          "title": "View  Roles Menu Action",
+          "key": "view-one-role-action",
+          "clientPath": "/access-module/role-menu-action/:id",
+          "serverPath": "/access-module/role-menu-action/:id",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        },
+        {
+          "title": "View Allowable Action ",
+          "key": "view-allowable-action",
+          "clientPath": "/access-module/allowable-actions/:id",
+          "serverPath": "/access-module/allowable-actions/:id",
+          "requestMethod": "GET",
+          "list": "Access Module"
+        }
+      ]
+    },
+    {
+      "title": "Action Request",
+      "key": "actionRequest",
+      "actions": [
+        {
+          "title": "Edit Action Request",
+          "key": "edit",
+          "clientPath": "/action-request/:id",
+          "serverPath": "/action-request/:id",
+          "requestMethod": "PUT",
+          "list": "Action Request"
+        },
+        {
+          "title": "View Action Requests",
+          "key": "view",
+          "clientPath": "/action-request/list",
+          "serverPath": "/action-request/list",
+          "requestMethod": "GET",
+          "list": "Action Request"
+        }
+      ]
+    },
+    {
+      "title": "Media Category",
+      "key": "mediaCategory",
+      "actions": [
+        {
+          "title": "Add Media Category",
+          "key": "add",
+          "clientPath": "/media-category",
+          "serverPath": "/media-category",
+          "requestMethod": "POST",
+          "list": "Media Category"
+        },
+        {
+          "title": "View Media Categories",
+          "key": "view",
+          "clientPath": "/media-category/list",
+          "serverPath": "/media-category/list",
+          "requestMethod": "GET",
+          "list": "Media Category"
+        },
+        {
+          "title": "View One Media Category",
+          "key": "view-one",
+          "clientPath": "/media-category/:id",
+          "serverPath": "/media-category/:id",
+          "requestMethod": "GET",
+          "list": "Media Category"
+        },
+        {
+          "title": "Edit Media Category",
+          "key": "edit",
+          "clientPath": "/media-category/:id",
+          "serverPath": "/media-category/:id",
+          "requestMethod": "PUT",
+          "list": "Media Category"
+        },
+        {
+          "title": "Delete Media Category",
+          "key": "delete",
+          "clientPath": "/media-category/:id",
+          "serverPath": "/media-category/:id",
+          "requestMethod": "DELETE",
+          "list": "Media Category"
+        }
+      ]
+    },
+    {
+      "title": "Media",
+      "key": "media",
+      "actions": [
+        {
+          "title": "Add Media",
+          "key": "add",
+          "clientPath": "/media",
+          "serverPath": "/media",
+          "requestMethod": "POST",
+          "list": "Media"
+        },
+        {
+          "title": "View Medias",
+          "key": "view",
+          "clientPath": "/media/list",
+          "serverPath": "/media/list",
+          "requestMethod": "GET",
+          "list": "Media"
+        },
+        {
+          "title": "View One Media",
+          "key": "view-one",
+          "clientPath": "/media/:id",
+          "serverPath": "/media/:id",
+          "requestMethod": "GET",
+          "list": "Media"
+        },
+        {
+          "title": "Change Media Name",
+          "key": "change-name",
+          "clientPath": "/media/change-name/:id",
+          "serverPath": "/media/change-name/:id",
+          "requestMethod": "PUT",
+          "list": "Media"
+        },
+        {
+          "title": "Delete Media",
+          "key": "delete",
+          "clientPath": "/media/:id",
+          "serverPath": "/media/:id",
+          "requestMethod": "DELETE",
+          "list": "Media"
+        }
+      ]
+    },
+    {
+      "title": "Company Settings",
+      "key": "companySettings",
+      "actions": [
+        {
+          "title": "View One Company Settings",
+          "key": "view",
+          "clientPath": "/company-setting",
+          "serverPath": "/company-setting",
+          "requestMethod": "GET",
+          "list": "Company Settings"
+        },
+        {
+          "title": "View By Id Company Settings",
+          "key": "view-by-id",
+          "clientPath": "/company-setting/:id",
+          "serverPath": "/company-setting/:id",
+          "requestMethod": "GET",
+          "list": "Company Settings"
+        },
+        {
+          "title": "Edit Company Settings",
+          "key": "edit",
+          "clientPath": "/company-setting/:id",
+          "serverPath": "/company-setting/:id",
+          "requestMethod": "PUT",
+          "list": "Company Settings"
+        }
+      ]
+    },
+    {
+      "title": "Social",
+      "key": "social",
+      "actions": [
+        {
+          "title": "Add Social",
+          "key": "add",
+          "clientPath": "/social",
+          "serverPath": "/social",
+          "requestMethod": "POST",
+          "list": "Social"
+        },
+        {
+          "title": "View Socials",
+          "key": "view",
+          "clientPath": "/social/list",
+          "serverPath": "/social/list",
+          "requestMethod": "GET",
+          "list": "Social"
+        },
+        {
+          "title": "View Social",
+          "key": "view-one",
+          "clientPath": "/social/:id",
+          "serverPath": "/social/:id",
+          "requestMethod": "GET",
+          "list": "Social"
+        },
+        {
+          "title": "Edit Social",
+          "key": "edit",
+          "clientPath": "/social/:id",
+          "serverPath": "/social/:id",
+          "requestMethod": "PUT",
+          "list": "Social"
+        },
+        {
+          "title": "Delete Social",
+          "key": "delete",
+          "clientPath": "/social/:id",
+          "serverPath": "/social/:id",
+          "requestMethod": "DELETE",
+          "list": "Social"
+        }
+      ]
+    },
+    {
+      "title": "Seo",
+      "key": "seo",
+      "actions": [
+        {
+          "title": "Add Seo",
+          "key": "add",
+          "clientPath": "/seo",
+          "serverPath": "/seo",
+          "requestMethod": "POST",
+          "list": "SEO"
+        },
+        {
+          "title": "View Seo",
+          "key": "view",
+          "clientPath": "/seo/list",
+          "serverPath": "/seo/list",
+          "requestMethod": "GET",
+          "list": "SEO"
+        },
+        {
+          "title": "View One Seo",
+          "key": "view-one",
+          "clientPath": "/seo/:id",
+          "serverPath": "/seo/:id",
+          "requestMethod": "GET",
+          "list": "SEO"
+        },
+        {
+          "title": "Edit Seo",
+          "key": "edit",
+          "clientPath": "/seo/:id",
+          "serverPath": "/seo/:id",
+          "requestMethod": "PUT",
+          "list": "SEO"
+        },
+        {
+          "title": "Delete Seo",
+          "key": "delete",
+          "clientPath": "/seo/:id",
+          "serverPath": "/seo/:id",
+          "requestMethod": "DELETE",
+          "list": "SEO"
+        }
+      ]
+    },
+    {
+      "title": "Layout",
+      "key": "layout",
+      "actions": [
+        {
+          "title": "View Layout",
+          "key": "view",
+          "clientPath": "/layout/list",
+          "serverPath": "/layout/list",
+          "requestMethod": "GET",
+          "list": "Layout"
+        }
+      ]
+    },
+    {
+      "title": "Faq",
+      "key": "faq",
+      "actions": [
+        {
+          "title": "Add Faq",
+          "key": "add",
+          "clientPath": "/faq",
+          "serverPath": "/faq",
+          "requestMethod": "POST",
+          "list": "FAQ"
+        },
+        {
+          "title": "View Faq",
+          "key": "view",
+          "clientPath": "/faq/list",
+          "serverPath": "/faq/list",
+          "requestMethod": "GET",
+          "list": "FAQ"
+        },
+        {
+          "title": "View One Faq",
+          "key": "view-one",
+          "clientPath": "/faq/:id",
+          "serverPath": "/faq/:id",
+          "requestMethod": "GET",
+          "list": "FAQ"
+        },
+        {
+          "title": "Edit Faq",
+          "key": "edit",
+          "clientPath": "/faq/:id",
+          "serverPath": "/faq/:id",
+          "requestMethod": "PUT",
+          "list": "FAQ"
+        },
+        {
+          "title": "Delete Faq",
+          "key": "delete",
+          "clientPath": "/faq/:id",
+          "serverPath": "/faq/:id",
+          "requestMethod": "DELETE",
+          "list": "FAQ"
+        }
+      ]
+    },
+    {
+      "title": "Email Template",
+      "key": "emailTemplate",
+      "actions": [
+        {
+          "title": "Add Email Template",
+          "key": "add",
+          "clientPath": "/email-template",
+          "serverPath": "/email-template",
+          "requestMethod": "POST",
+          "list": "Email Template"
+        },
+        {
+          "title": "View Email Template",
+          "key": "view",
+          "clientPath": "/email-template/list",
+          "serverPath": "/email-template/list",
+          "requestMethod": "GET",
+          "list": "Email Template"
+        },
+        {
+          "title": "View One Email Template",
+          "key": "view-one",
+          "clientPath": "/email-template/:id",
+          "serverPath": "/email-template/:id",
+          "requestMethod": "GET",
+          "list": "Email Template"
+        },
+        {
+          "title": "Edit Email Template",
+          "key": "edit",
+          "clientPath": "/email-template/:id",
+          "serverPath": "/email-template/:id",
+          "requestMethod": "PUT",
+          "list": "Email Template"
+        },
+        {
+          "title": "Delete Email Template",
+          "key": "delete",
+          "clientPath": "/email-template/:id",
+          "serverPath": "/email-template/:id",
+          "requestMethod": "DELETE",
+          "list": "Email Template"
+        }
+      ]
+    },
+    {
+      "title": "Active Email Template",
+      "key": "activeEmailTemplate",
+      "actions": [
+        {
+          "title": "Add Active Email Template",
+          "key": "add",
+          "clientPath": "/active-email-template",
+          "serverPath": "/active-email-template",
+          "requestMethod": "POST",
+          "list": "Active Email Template"
+        },
+        {
+          "title": "View Active Email Template",
+          "key": "view",
+          "clientPath": "/active-email-template/list",
+          "serverPath": "/active-email-template/list",
+          "requestMethod": "GET",
+          "list": "Active Email Template"
+        },
+        {
+          "title": "View One Active Email Template",
+          "key": "view-one",
+          "clientPath": "/active-email-template/:id",
+          "serverPath": "/active-email-template/:id",
+          "requestMethod": "GET",
+          "list": "Active Email Template"
+        }
+      ]
+    },
+    {
+      "title": "Email SMTP",
+      "key": "smtp",
+      "actions": [
+        {
+          "title": "Add Email SMTP",
+          "key": "add",
+          "clientPath": "/smtp",
+          "serverPath": "/smtp",
+          "requestMethod": "POST",
+          "list": "Email SMTP"
+        },
+        {
+          "title": "View One Email SMTP",
+          "key": "view",
+          "clientPath": "/smtp",
+          "serverPath": "/smtp",
+          "requestMethod": "GET",
+          "list": "Email SMTP"
+        },
+        {
+          "title": "Edit Email SMTP",
+          "key": "edit",
+          "clientPath": "/smtp",
+          "serverPath": "/smtp",
+          "requestMethod": "PUT",
+          "list": "Email SMTP"
+        }
+      ]
+    },
+    {
+      "title": "Product Category",
+      "key": "productCategory",
+      "actions": [
+        {
+          "title": "Add Product Category",
+          "key": "add",
+          "clientPath": "/product-category",
+          "serverPath": "/product-category",
+          "requestMethod": "POST",
+          "list": "Product Category"
+        },
+        {
+          "title": "View Product Category",
+          "key": "view",
+          "clientPath": "/product-category/list",
+          "serverPath": "/product-category/list",
+          "requestMethod": "GET",
+          "list": "Product Category"
+        },
+        {
+          "title": "View One Product Category",
+          "key": "view-one",
+          "clientPath": "/product-category/:id",
+          "serverPath": "/product-category/:id",
+          "requestMethod": "GET",
+          "list": "Product Category"
+        },
+        {
+          "title": "Edit Product Category Order",
+          "key": "edit-order",
+          "clientPath": "/product-category/update-order",
+          "serverPath": "/product-category/update-order",
+          "requestMethod": "PUT",
+          "list": "Product"
+        },
+        {
+          "title": "Edit Product Category",
+          "key": "edit",
+          "clientPath": "/product-category/:id",
+          "serverPath": "/product-category/:id",
+          "requestMethod": "PUT",
+          "list": "Product Category"
+        },
+        {
+          "title": "Delete Product Category",
+          "key": "delete",
+          "clientPath": "/product-category/:id",
+          "serverPath": "/product-category/:id",
+          "requestMethod": "DELETE",
+          "list": "Product Category"
+        }
+      ]
+    },
+    {
+      "title": "Product",
+      "key": "product",
+      "actions": [
+        {
+          "title": "Add Product",
+          "key": "add",
+          "clientPath": "/product",
+          "serverPath": "/product",
+          "requestMethod": "POST",
+          "list": "Product"
+        },
+        {
+          "title": "View Product",
+          "key": "view",
+          "clientPath": "/product/list",
+          "serverPath": "/product/list",
+          "requestMethod": "GET",
+          "list": "Product"
+        },
+        {
+          "title": "View One Product",
+          "key": "view-one",
+          "clientPath": "/product/:id",
+          "serverPath": "/product/:id",
+          "requestMethod": "GET",
+          "list": "Product"
+        },
+        {
+          "title": "Edit Product",
+          "key": "edit",
+          "clientPath": "/product/:id",
+          "serverPath": "/product/:id",
+          "requestMethod": "PUT",
+          "list": "Product"
+        },
+        {
+          "title": "Edit Product Order",
+          "key": "edit-order",
+          "clientPath": "/product/update-order",
+          "serverPath": "/product/update-order",
+          "requestMethod": "PUT",
+          "list": "Product"
+        },
+        {
+          "title": "Delete Product",
+          "key": "delete",
+          "clientPath": "/product/:id",
+          "serverPath": "/product/:id",
+          "requestMethod": "DELETE",
+          "list": "Product"
+        }
+      ]
+    },
+    {
+      "title": "Product Variant",
+      "key": "productVariant",
+      "actions": [
+        {
+          "title": "Add Product Variant",
+          "key": "add",
+          "clientPath": "/product-variant",
+          "serverPath": "/product-variant",
+          "requestMethod": "POST",
+          "list": "Product Variant"
+        },
+        {
+          "title": "View Product Variant",
+          "key": "view",
+          "clientPath": "/product-variant/list",
+          "serverPath": "/product-variant/list",
+          "requestMethod": "GET",
+          "list": "Product Variant"
+        },
+        {
+          "title": "View One Product Variant",
+          "key": "view-one",
+          "clientPath": "/product-variant/:id",
+          "serverPath": "/product-variant/:id",
+          "requestMethod": "GET",
+          "list": "Product Variant"
+        },
+        {
+          "title": "Edit Product Variant",
+          "key": "edit",
+          "clientPath": "/product-variant/:id",
+          "serverPath": "/product-variant/:id",
+          "requestMethod": "PUT",
+          "list": "Product Variant"
+        },
+        {
+          "title": "Delete Product Variant",
+          "key": "delete",
+          "clientPath": "/product-variant/:id",
+          "serverPath": "/product-variant/:id",
+          "requestMethod": "DELETE",
+          "list": "Product Variant"
+        }
+      ]
+    },
+    {
+      "title": "Customer",
+      "key": "customer",
+      "actions": [
+        {
+          "title": "View Customer",
+          "key": "view",
+          "clientPath": "/customer-auth/list",
+          "serverPath": "/customer-auth/list",
+          "requestMethod": "GET",
+          "list": "Customer"
+        },
+        {
+          "title": "View One Customer",
+          "key": "view-one",
+          "clientPath": "/customer-auth/:id",
+          "serverPath": "/customer-auth/:id",
+          "requestMethod": "GET",
+          "list": "Customer"
+        },
+        {
+          "title": "Edit Customer",
+          "key": "edit",
+          "clientPath": "/customer-auth/:id",
+          "serverPath": "/customer-auth/:id",
+          "requestMethod": "PUT",
+          "list": "Customer"
+        },
+        {
+          "title": "Block Customer",
+          "key": "block",
+          "clientPath": "/customer-auth/block/:id",
+          "serverPath": "/customer-auth/block/:id",
+          "requestMethod": "PATCH",
+          "list": "Customer"
+        },
+        {
+          "title": "Delete Customer",
+          "key": "block",
+          "clientPath": "/customer-auth/soft-delete/:id",
+          "serverPath": "/customer-auth/soft-delete/:id",
+          "requestMethod": "PATCH",
+          "list": "Customer"
+        }
+      ]
+    },
+    {
+      "title": "Contact",
+      "key": "contact",
+      "actions": [
+        {
+          "title": "Add Contact",
+          "key": "add",
+          "clientPath": "/contact",
+          "serverPath": "/contact",
+          "requestMethod": "POST",
+          "list": "Contact"
+        },
+        {
+          "title": "View Contact",
+          "key": "view",
+          "clientPath": "/contact/list",
+          "serverPath": "/contact/list",
+          "requestMethod": "GET",
+          "list": "Contact"
+        },
+        {
+          "title": "Delete Contact",
+          "key": "delete",
+          "clientPath": "/contact/:id",
+          "serverPath": "/contact/:id",
+          "requestMethod": "DELETE",
+          "list": "Contact"
+        }
+      ]
+    },
+    {
+      "title": "Banner",
+      "key": "banner",
+      "actions": [
+        {
+          "title": "Add Banner",
+          "key": "add",
+          "clientPath": "/banner",
+          "serverPath": "/banner",
+          "requestMethod": "POST",
+          "list": "Banner"
+        },
+        {
+          "title": "View Banner",
+          "key": "view",
+          "clientPath": "/banner/list",
+          "serverPath": "/banner/list",
+          "requestMethod": "GET",
+          "list": "Banner"
+        },
+        {
+          "title": "View One Banner",
+          "key": "view-one",
+          "clientPath": "/banner/:id",
+          "serverPath": "/banner/:id",
+          "requestMethod": "GET",
+          "list": "Banner"
+        },
+        {
+          "title": "Edit Banner",
+          "key": "edit",
+          "clientPath": "/banner/:id",
+          "serverPath": "/banner/:id",
+          "requestMethod": "PUT",
+          "list": "Banner"
+        },
+        {
+          "title": "Delete Banner",
+          "key": "delete",
+          "clientPath": "/banner/:id",
+          "serverPath": "/banner/:id",
+          "requestMethod": "DELETE",
+          "list": "Banner"
+        }
+      ]
+    },
+    {
+      "title": "Order",
+      "key": "order",
+      "actions": [
+        {
+          "title": "Add Order",
+          "key": "add",
+          "clientPath": "/order",
+          "serverPath": "/order",
+          "requestMethod": "POST",
+          "list": "Order"
+        },
+        {
+          "title": "View Order",
+          "key": "view",
+          "clientPath": "/order/list",
+          "serverPath": "/order/list",
+          "requestMethod": "GET",
+          "list": "Order"
+        },
+        {
+          "title": "Delete Order",
+          "key": "delete",
+          "clientPath": "/order/:id",
+          "serverPath": "/order/:id",
+          "requestMethod": "DELETE",
+          "list": "Order"
+        }
+      ]
+    }
+  ]
+}
