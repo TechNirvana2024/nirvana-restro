@@ -110,7 +110,7 @@ router.post(
   "/login",
   loginValidation,
   loginAttemptMiddleware,
-  isValidCaptcha,
+  // isValidCaptcha,
   authLogin,
 );
 router.post("/logout", authentication, authLogout);
