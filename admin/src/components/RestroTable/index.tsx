@@ -24,7 +24,7 @@ const RestroTable: React.FC<RestroTableProps> = ({ table }) => {
       className={`p-4 bg-white rounded-lg shadow-md border-l-4 
         ${
           table.status === "available"
-            ? "border-green-500"
+            ? "border-green-500 hover:cursor-pointer"
             : table.status === "occupied"
               ? "border-red-500"
               : table.status === "reserved"
