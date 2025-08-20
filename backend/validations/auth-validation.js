@@ -10,7 +10,7 @@ const loginValidation = async (req, res, next) => {
   let joiModel = joi.object({
     username: joi.string().required().label("username"),
     password: joi.string().required().label("password"),
-    captchaToken: joi.string().required().label("captchaToken"),
+    captchaToken: joi.string().optional().label("captchaToken"),
   });
   const errors = await validateRequestBody(req, res, joiModel);
   if (!isEmpty(errors)) {
