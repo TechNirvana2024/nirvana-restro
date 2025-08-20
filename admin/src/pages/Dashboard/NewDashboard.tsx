@@ -4,7 +4,8 @@ import { ExternalLink, TrendingDown, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CurrencySign, FRONTEND_BASE_URL } from "@/constants";
 import { useGetApiQuery } from "@/redux/services/crudApi";
-
+import { dummyTables as tables } from "../../tempDatas/table";
+import RestroTable from "@/components/RestroTable";
 const trendObj = {
   UP: {
     color: "#40c057",
@@ -28,8 +29,10 @@ export default function NewDashboard() {
   return (
     <div>
       <Header />
-      <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-        {/* future table grid */}
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {tables.map((table) => (
+          <RestroTable table={table} />
+        ))}
       </div>
     </div>
   );
