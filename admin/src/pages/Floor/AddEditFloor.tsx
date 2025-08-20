@@ -27,7 +27,7 @@ interface Props {
   closeModal?: () => void;
 }
 
-export default function AddEditDepartment({
+export default function AddEditFloor({
   isComponent = false,
   closeModal = () => {},
 }: Props) {

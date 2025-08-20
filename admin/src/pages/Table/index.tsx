@@ -19,7 +19,7 @@ interface ContactResponseType {
   email: string;
 }
 
-export default function Department() {
+export default function OrderTable() {
   const accessList = checkAccess("Department");
 
   const { query, handlePagination } = usePagination({ page: 1, limit: 10 });

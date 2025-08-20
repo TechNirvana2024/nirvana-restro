@@ -19,8 +19,8 @@ interface ContactResponseType {
   email: string;
 }
 
-export default function Department() {
-  const accessList = checkAccess("Department");
+export default function Floor() {
+  const accessList = checkAccess("Floor");
 
   const { query, handlePagination } = usePagination({ page: 1, limit: 10 });
 

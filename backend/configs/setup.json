@@ -981,6 +981,144 @@
           "list": "Order"
         }
       ]
+    },
+    {
+      "title": "Department",
+      "key": "department",
+      "actions": [
+        {
+          "title": "Add Department",
+          "key": "add",
+          "clientPath": "/department",
+          "serverPath": "/department",
+          "requestMethod": "POST",
+          "list": "Department"
+        },
+        {
+          "title": "View Department",
+          "key": "view",
+          "clientPath": "/department/list",
+          "serverPath": "/department/list",
+          "requestMethod": "GET",
+          "list": "Department"
+        },
+        {
+          "title": "View One Department",
+          "key": "view-one",
+          "clientPath": "/department/:id",
+          "serverPath": "/department/:id",
+          "requestMethod": "GET",
+          "list": "Department"
+        },
+        {
+          "title": "Edit Department",
+          "key": "edit",
+          "clientPath": "/department/:id",
+          "serverPath": "/department/:id",
+          "requestMethod": "PUT",
+          "list": "Department"
+        },
+        {
+          "title": "Delete Department",
+          "key": "delete",
+          "clientPath": "/department/:id",
+          "serverPath": "/department/:id",
+          "requestMethod": "DELETE",
+          "list": "Department"
+        }
+      ]
+    },
+    {
+      "title": "Floor",
+      "key": "floor",
+      "actions": [
+        {
+          "title": "Add Floor",
+          "key": "add",
+          "clientPath": "/floor",
+          "serverPath": "/floor",
+          "requestMethod": "POST",
+          "list": "Floor"
+        },
+        {
+          "title": "View Floor",
+          "key": "view",
+          "clientPath": "/floor/list",
+          "serverPath": "/floor/list",
+          "requestMethod": "GET",
+          "list": "Floor"
+        },
+        {
+          "title": "View One Floor",
+          "key": "view-one",
+          "clientPath": "/floor/:id",
+          "serverPath": "/floor/:id",
+          "requestMethod": "GET",
+          "list": "Floor"
+        },
+        {
+          "title": "Edit Floor",
+          "key": "edit",
+          "clientPath": "/floor/:id",
+          "serverPath": "/floor/:id",
+          "requestMethod": "PUT",
+          "list": "Floor"
+        },
+        {
+          "title": "Delete Floor",
+          "key": "delete",
+          "clientPath": "/floor/:id",
+          "serverPath": "/floor/:id",
+          "requestMethod": "DELETE",
+          "list": "Floor"
+        }
+      ]
+    },
+    {
+      "title": "Table",
+      "key": "table",
+      "actions": [
+        {
+          "title": "Add Table",
+          "key": "add",
+          "clientPath": "/table",
+          "serverPath": "/table",
+          "requestMethod": "POST",
+          "list": "Table"
+        },
+        {
+          "title": "View Table",
+          "key": "view",
+          "clientPath": "/table/list",
+          "serverPath": "/table/list",
+          "requestMethod": "GET",
+          "list": "Table"
+        },
+        {
+          "title": "View One Table",
+          "key": "view-one",
+          "clientPath": "/table/:id",
+          "serverPath": "/table/:id",
+          "requestMethod": "GET",
+          "list": "Table"
+        },
+        {
+          "title": "Edit Table",
+          "key": "edit",
+          "clientPath": "/table/:id",
+          "serverPath": "/table/:id",
+          "requestMethod": "PUT",
+          "list": "Table"
+        },
+        {
+          "title": "Delete Table",
+          "key": "delete",
+          "clientPath": "/table/:id",
+          "serverPath": "/table/:id",
+          "requestMethod": "DELETE",
+          "list": "Table"
+        }
+      ]
     }
   ]
 }

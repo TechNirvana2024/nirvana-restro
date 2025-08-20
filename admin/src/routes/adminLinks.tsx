@@ -26,6 +26,12 @@ import Contact from "@/pages/Contact";
 import Order from "@/pages/Order";
 import Banner from "@/pages/Banner";
 import AddEditBanner from "@/pages/Banner/AddEditBanner";
+import Department from "@/pages/Department";
+import AddEditDepartment from "@/pages/Department/AddEditDepartment";
+import Floor from "@/pages/Floor";
+import AddEditFloor from "@/pages/Floor/AddEditFloor";
+import OrderTable from "@/pages/Table";
+import AddEditTable from "@/pages/Table/AddEditTable";
 
 export const adminLinks = [
   {
@@ -156,5 +162,41 @@ export const adminLinks = [
   {
     path: "/banner/:id",
     element: <AddEditBanner />,
+  },
+  {
+    path: "department/list",
+    element: <Department />,
+  },
+  {
+    path: "department/:id",
+    element: <AddEditDepartment />,
+  },
+  {
+    path: "department/",
+    Element: <AddEditDepartment />,
+  },
+  {
+    path: "floor/list",
+    element: <Floor />,
+  },
+  {
+    path: "floor/:id",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "floor/",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "table/list",
+    element: <OrderTable />,
+  },
+  {
+    path: "table/:id",
+    element: <AddEditTable />,
+  },
+  {
+    path: "table/",
+    element: <AddEditTable />,
   },
 ];
