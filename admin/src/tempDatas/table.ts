@@ -1,7 +1,7 @@
 export const dummyTables = [
   {
     id: 1,
-    floorId: 1,
+    floor: { id: 1, floorNo: "Main" },
     tableNo: "T1",
     name: "Window Side",
     type: "regular",
@@ -13,7 +13,7 @@ export const dummyTables = [
   },
   {
     id: 2,
-    floorId: 1,
+    floor: { id: 1, floorNo: "Main" },
     tableNo: "T2",
     name: "Corner Booth",
     type: "regular",
@@ -25,7 +25,7 @@ export const dummyTables = [
   },
   {
     id: 3,
-    floorId: 1,
+    floor: { id: 1, floorNo: "Main" },
     tableNo: "T3",
     name: null,
     type: "indoor",
@@ -37,7 +37,7 @@ export const dummyTables = [
   },
   {
     id: 4,
-    floorId: 2,
+    floor: { id: 2, floorNo: "Patio" },
     tableNo: "T4",
     name: "Patio Table",
     type: "outdoor",
@@ -49,7 +49,7 @@ export const dummyTables = [
   },
   {
     id: 5,
-    floorId: 2,
+    floor: { id: 3, floorNo: "Garden" },
     tableNo: "T5",
     name: "Garden View",
     type: "outdoor",
@@ -61,7 +61,7 @@ export const dummyTables = [
   },
   {
     id: 6,
-    floorId: 2,
+    floor: { id: 2, floorNo: "Patio" },
     tableNo: "T6",
     name: "VIP Lounge",
     type: "vip",
@@ -73,7 +73,7 @@ export const dummyTables = [
   },
   {
     id: 7,
-    floorId: 3,
+    floor: { id: 4, floorNo: "Rooftop" },
     tableNo: "T7",
     name: "Rooftop",
     type: "outdoor",
@@ -85,7 +85,7 @@ export const dummyTables = [
   },
   {
     id: 8,
-    floorId: 3,
+    floor: { id: 4, floorNo: "Rooftop" },
     tableNo: "T8",
     name: null,
     type: "regular",
@@ -97,7 +97,7 @@ export const dummyTables = [
   },
   {
     id: 9,
-    floorId: 1,
+    floor: { id: 1, floorNo: "Main" },
     tableNo: "T9",
     name: "Family Table",
     type: "regular",
@@ -109,7 +109,7 @@ export const dummyTables = [
   },
   {
     id: 10,
-    floorId: 2,
+    floor: { id: 3, floorNo: "Garden" },
     tableNo: "T10",
     name: "Terrace",
     type: "outdoor",
@@ -121,7 +121,7 @@ export const dummyTables = [
   },
   {
     id: 11,
-    floorId: 3,
+    floor: { id: 4, floorNo: "Rooftop" },
     tableNo: "T11",
     name: "Private Room",
     type: "vip",
@@ -133,7 +133,7 @@ export const dummyTables = [
   },
   {
     id: 12,
-    floorId: 1,
+    floor: { id: 1, floorNo: "Main" },
     tableNo: "T12",
     name: null,
     type: "indoor",
