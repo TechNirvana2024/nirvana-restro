@@ -21,6 +21,11 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
       imageUrl: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -33,7 +38,7 @@ module.exports = (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      order: {
+      orders: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -43,11 +48,7 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: 0,
       },
-      slug: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
+
     },
     {
       timestamps: true,

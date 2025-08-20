@@ -21,17 +21,17 @@ const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
-const redis = require("./configs/redis");
-const { RedisStore } = require("connect-redis");
+// const redis = require("./configs/redis");
+// const { RedisStore } = require("connect-redis");
 
 // Add this //path
 const messageConstants = require("./constants/message-constant");
 const setupPath = require("./configs/setup");
 const { Sequelize } = require("./models");
 const logger = require("./configs/logger");
-const { apiRateLimiter } = require("./utils/loginRateLimit");
-
 // const { apiRateLimiter } = require("./utils/loginRateLimit");
+
+const { apiRateLimiter } = require("./utils/loginRateLimit");
 
 //websocket
 const { initWebSocket } = require("./websocket");
@@ -63,8 +63,7 @@ const allowedOrigins = [
   "http://localhost:5171", // local dev
   "http://localhost:7001",
   "http://192.168.1.66:9001",
-  "https://staging.unimomo.co.uk", // frontend URL
-  "https://admin.unimomo.co.uk", // frontend URL
+
 ];
 
 app.use(
@@ -169,24 +168,7 @@ app.use("/setup/", setupPath);
 
 //image serve for public
 app.use("/public", express.static(path.join(__dirname, "public")));
-// app.use("/resources", express.static(path.join(__dirname, "resources")));
 
-// app.use(function (req, res, next) {
-//   req.client_ip_address = ip.address();
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Authorization, Origin, X-Requested-With, Content-Type, Accept",
-//   );
-//   res.header("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT, PATCH");
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   // Handle preflight (OPTIONS) request
-//   if (req.method === "OPTIONS") {
-//     return res.status(200).end(); // Send a response to OPTIONS request
-//   }
-
-//   next();
-// });
 
 app.use((req, res, next) => {
   const err = new Error("Not Found");

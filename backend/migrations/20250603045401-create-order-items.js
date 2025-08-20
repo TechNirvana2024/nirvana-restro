@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable("order_items", {
       id: {
         allowNull: false,
@@ -9,6 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+
       orderId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -18,23 +19,23 @@ module.exports = {
         },
         onDelete: "CASCADE",
       },
-      cartId: {
+      productId: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: {
-          model: "carts",
+         references: {
+          model: "products",
           key: "id",
         },
         onDelete: "SET NULL",
       },
-      productId: {
+      departmentId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "products",
+          model: "departments",
           key: "id",
         },
-        // onDelete: "SET NULL",
+        onDelete: "SET NULL",
       },
       quantity: {
         type: Sequelize.INTEGER,
@@ -44,6 +45,7 @@ module.exports = {
       price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
+        validate: { min: 0 },
       },
       subtotal: {
         type: Sequelize.DECIMAL(10, 2),
@@ -54,6 +56,14 @@ module.exports = {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: true,
         defaultValue: 0.0,
+      },
+      specialInstructions: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      status: {
+        type: Sequelize.ENUM("pending", "preparing", "ready", "served"),
+        defaultValue: "pending",
       },
       createdAt: {
         allowNull: false,
@@ -68,10 +78,9 @@ module.exports = {
         ),
       },
     });
-    await queryInterface.addIndex("order_items", ["orderId", "productId"]);
   },
 
-  down: async (queryInterface, Sequelize) => {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("order_items");
   },
 };

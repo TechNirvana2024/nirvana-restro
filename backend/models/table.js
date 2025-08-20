@@ -29,6 +29,10 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      sessionId:{
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
       tableNo: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -60,15 +64,11 @@ module.exports = (sequelize) => {
       },
       currentSessionId: {
         type: DataTypes.UUID,
-        allowNull: true, // Null when table is available
+        allowNull: true, 
       },
       sessionStartTime: {
         type: DataTypes.DATE,
-        allowNull: true, // Set when session starts
-      },
-      isActive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        allowNull: true, 
       },
     },
     {

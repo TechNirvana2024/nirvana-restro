@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable("orders", {
       id: {
         allowNull: false,
@@ -9,92 +9,92 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      customerId: {
+      tableId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "customers",
+          model: "tables",
           key: "id",
         },
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
       },
-      idempotencyKey: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      sessionId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: "tables",
+          key: "sessionId",
+        },
+        onDelete: "SET NULL",
       },
       status: {
         type: Sequelize.ENUM(
           "pending",
           "confirmed",
-          "shipped",
-          "delivered",
+          "preparing",
+          "ready",
+          "completed",
           "cancelled",
         ),
         defaultValue: "pending",
       },
-      stripePaymentIntentId: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
       paymentStatus: {
-        type: Sequelize.ENUM("pending", "complete", "failed", "expired"),
+        type: Sequelize.ENUM("pending", "paid", "failed"),
         defaultValue: "pending",
       },
-      stripeChargeId: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       paymentMethod: {
-        type: Sequelize.ENUM("cash", "stripe"),
+        type: Sequelize.ENUM("cash", "card", "online"),
+        defaultValue: "cash",
+      },
+      orderType: {
+        type: Sequelize.ENUM("dineIn", "takeaway", "delivery"),
         allowNull: false,
       },
-      trackingNo: {
+      isGuestOrder: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      orderNumber: {
         type: Sequelize.UUID,
         unique: true,
         defaultValue: Sequelize.UUIDV4,
-      },
-      shippingAmount: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: 0.0,
       },
       totalAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.0,
       },
-      orderDate: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
       orderNote: {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      deliveryTime: {
+      estimatedTime: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      orderStartTime: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      orderFinishTime: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      customerName: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      mobileNumber: {
+      customerPhone: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      city: {
+      customerEmail: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
-      pinCode: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      deliveryAddress: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -109,10 +109,9 @@ module.exports = {
         ),
       },
     });
-    await queryInterface.addIndex("orders", ["customerId"]);
   },
 
-  down: async (queryInterface, Sequelize) => {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("orders");
   },
 };

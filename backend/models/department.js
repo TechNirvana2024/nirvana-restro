@@ -28,6 +28,11 @@ module.exports = (sequelize) => {
           len: [2, 100],
         },
       },
+       slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -37,7 +42,7 @@ module.exports = (sequelize) => {
         defaultValue: true,
         allowNull: false,
       },
-      preparationTime: {
+      AvgPreparationTime: {
         type: DataTypes.INTEGER,
         allowNull: true,
         validate: { min: 0 },
@@ -58,11 +63,7 @@ module.exports = (sequelize) => {
         },
         comment: "Hex color code for department identification in UI",
       },
-      slug: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
+     
     },
     {
       timestamps: true,
