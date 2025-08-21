@@ -30,7 +30,7 @@ module.exports = {
       },
       departmentId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "departments",
           key: "id",
