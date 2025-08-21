@@ -12,10 +12,14 @@ module.exports = (sequelize) => {
         foreignKey: "productId",
         as: "mediaArr",
       });
-      Product.hasMany(models.orderItemModel, {
-        foreignKey: "productId",
-        as: "orderItems",
-      });
+      // Product.hasMany(models.orderItemModel, {
+      //   foreignKey: "productId",
+      //   as: "orderItems",
+      // });
+      Product.belongsTo(models.departmentModel,{
+        foreignKey:"departmentId",
+        as:"department"
+      })
     }
   }
 
@@ -30,6 +34,10 @@ module.exports = (sequelize) => {
       productCategoryId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      departmentId:{
+        type: DataTypes.INTEGER,
+        allowNull:false
       },
       name: {
         type: DataTypes.STRING,
@@ -49,7 +57,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      order: {
+      orders: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -59,11 +67,11 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       stockStatus: {
-        type: DataTypes.ENUM("in_stock", "out_of_stock", "low_stock"), // ✅ New column for better stock tracking
+        type: DataTypes.ENUM("in_stock", "out_of_stock", "low_stock"), 
         defaultValue: "in_stock",
       },
       reservedQuantity: {
-        type: DataTypes.INTEGER, // ✅ Helps track pending reservations
+        type: DataTypes.INTEGER, 
         allowNull: false,
         defaultValue: 0,
       },

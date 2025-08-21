@@ -20,6 +20,16 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      departmentId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "departments",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -40,6 +50,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: { min: 1 },
+      },
+      orders: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       price: {
         type: Sequelize.DECIMAL(10, 2),

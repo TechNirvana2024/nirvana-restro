@@ -39,6 +39,10 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      departmentId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -63,14 +67,6 @@ module.exports = (sequelize) => {
       specialInstructions: {
         type: DataTypes.TEXT,
         allowNull: true,
-      },
-      departmentId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: "departments",
-          key: "id",
-        },
       },
       status: {
         type: DataTypes.ENUM("pending", "preparing", "ready", "served"),

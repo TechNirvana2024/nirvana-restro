@@ -20,6 +20,14 @@ import ProductVariant from "@/pages/ProductVariant";
 import AddEditProductVariant from "@/pages/ProductVariant/AddEditProductVariant";
 import Customer from "@/pages/Customer";
 import Order from "@/pages/Order";
+import Banner from "@/pages/Banner";
+import AddEditBanner from "@/pages/Banner/AddEditBanner";
+import Department from "@/pages/Department";
+import AddEditDepartment from "@/pages/Department/AddEditDepartment";
+import Floor from "@/pages/Floor";
+import AddEditFloor from "@/pages/Floor/AddEditFloor";
+import OrderTable from "@/pages/Table";
+import AddEditTable from "@/pages/Table/AddEditTable";
 
 export const adminLinks = [
   {
@@ -125,5 +133,49 @@ export const adminLinks = [
   {
     path: "/order/list",
     element: <Order />,
+  },
+  {
+    path: "/banner/list",
+    element: <Banner />,
+  },
+  {
+    path: "/banner/:id",
+    element: <AddEditBanner />,
+  },
+  {
+    path: "/department/list",
+    element: <Department />,
+  },
+  {
+    path: "/department/:id",
+    element: <AddEditDepartment />,
+  },
+  {
+    path: "/department/",
+    element: <AddEditDepartment />,
+  },
+  {
+    path: "/floor/list",
+    element: <Floor />,
+  },
+  {
+    path: "/floor/:id",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "/floor/",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "/table/list",
+    element: <OrderTable />,
+  },
+  {
+    path: "/table/:id",
+    element: <AddEditTable />,
+  },
+  {
+    path: "/table/",
+    element: <AddEditTable />,
   },
 ];

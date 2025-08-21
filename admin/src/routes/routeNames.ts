@@ -36,3 +36,12 @@ export const ORDER_LIST_ROUTE = "/admin/order/list";
 export const ORDER_ADD_ROUTE = "/admin/order/";
 export const BANNER_LIST_ROUTE = "/admin/banner/list";
 export const BANNER_ADD_ROUTE = "/admin/banner/";
+
+export const DEPARTMENT_ADD_ROUTE = "/admin/department/";
+export const DEPARTMENT_LIST_ROUTE = "/admin/department/list";
+
+export const TABLE_ADD_ROUTE = "/admin/table/";
+export const TABLE_LIST_ROUTE = "/admin/table/list";
+
+export const FLOOR_ADD_ROUTE = "/admin/floor/";
+export const FLOOR_LIST_ROUTE = "/admin/floor/list";

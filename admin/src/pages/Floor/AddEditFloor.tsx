@@ -1,5 +1,5 @@
 import Input from "@/components/Input";
-import { DepartmentSchema } from "./schema";
+import { FloorSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,25 +7,25 @@ import { handleError, handleResponse } from "@/utils/responseHandler";
 import Button from "@/components/Button";
 import { z } from "zod";
 import useTranslation from "@/locale/useTranslation";
-import { DEPARTMENT_LIST_ROUTE } from "@/routes/routeNames";
+import { FLOOR_LIST_ROUTE } from "@/routes/routeNames";
 import { useEffect } from "react";
 import {
   useCreateApiMutation,
   useGetApiQuery,
   useUpdateApiMutation,
 } from "@/redux/services/crudApi";
-import { DEPARTMENT_URL } from "@/constants/apiUrlConstants";
+import { FLOOR_URL } from "@/constants/apiUrlConstants";
 import PageTitle from "@/components/PageTitle";
 import TextArea from "@/components/TextArea";
 
-type DepartmentFormType = z.infer<typeof DepartmentSchema>;
+type FloorFormType = z.infer<typeof FloorSchema>;
 
 interface Props {
   isComponent?: boolean;
   closeModal?: () => void;
 }
 
-export default function AddEditDepartment({
+export default function AddEditFloor({
   isComponent = false,
   closeModal = () => {},
 }: Props) {
@@ -40,48 +40,46 @@ export default function AddEditDepartment({
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<DepartmentFormType>({
-    resolver: zodResolver(DepartmentSchema),
+  } = useForm<FloorFormType>({
+    resolver: zodResolver(FloorSchema),
   });
 
-  const [createDepartment, { isLoading: creatingDepartment }] =
-    useCreateApiMutation();
-  const [updateDepartment, { isLoading: updatingDepartment }] =
-    useUpdateApiMutation();
+  const [createFloor, { isLoading: creatingFloor }] = useCreateApiMutation();
+  const [updateFloor, { isLoading: updatingFloor }] = useUpdateApiMutation();
 
   const {
-    data: departmentData,
+    data: floorData,
     isSuccess: success,
     isLoading: loading,
-  } = useGetApiQuery(`${DEPARTMENT_URL}${id}`, {
+  } = useGetApiQuery(`${FLOOR_URL}${id}`, {
     skip: !isEditMode,
   });
 
   useEffect(() => {
-    if (isEditMode && departmentData && departmentData?.data) {
-      reset(departmentData?.data);
+    if (isEditMode && floorData && floorData?.data) {
+      reset(floorData?.data);
     }
-  }, [departmentData, isEditMode, reset]);
+  }, [floorData, isEditMode, reset]);
 
   const handleSuccess = () => {
     if (isComponent) {
       closeModal();
     } else {
-      navigate(DEPARTMENT_LIST_ROUTE);
+      navigate(FLOOR_LIST_ROUTE);
     }
   };
 
-  const onSubmit = async (data: DepartmentFormType) => {
+  const onSubmit = async (data: FloorFormType) => {
     const body = { ...data };
 
     try {
       const response = isEditMode
-        ? await updateDepartment({
-            url: `${DEPARTMENT_URL}${id}`,
+        ? await updateFloor({
+            url: `${FLOOR_URL}${id}`,
             body,
           }).unwrap()
-        : await createDepartment({
-            url: `${DEPARTMENT_URL}`,
+        : await createFloor({
+            url: `${FLOOR_URL}`,
             body,
           }).unwrap();
 
@@ -97,10 +95,7 @@ export default function AddEditDepartment({
   return (
     <>
       {!isComponent && (
-        <PageTitle
-          title={isEditMode ? "Edit Department" : "Add Department"}
-          isBack
-        />
+        <PageTitle title={isEditMode ? "Edit Floor" : "Add Floor"} isBack />
       )}
       <form
         className={`grid grid-cols-1 gap-[2rem] mt-[1rem] ${
@@ -109,8 +104,16 @@ export default function AddEditDepartment({
         onSubmit={handleSubmit(onSubmit)}
       >
         <Input
+          label="Floor No"
+          placeholder="Enter Floor Number"
+          className="w-full md:w-1/2"
+          {...register("floorNo")}
+          error={errors.floorNo?.message}
+        />
+
+        <Input
           label="Name"
-          placeholder="Enter Department Name"
+          placeholder="Enter Floor Name"
           className="w-full md:w-1/2"
           {...register("name")}
           error={errors.name?.message}
@@ -118,43 +121,17 @@ export default function AddEditDepartment({
 
         <TextArea
           label="Description"
-          placeholder="Enter Department Description"
+          placeholder="Enter Floor Description"
           className="w-full md:w-1/2"
           {...register("description")}
           error={errors.description?.message}
-        />
-
-        <Input
-          label="Average Preparation Time (minutes)"
-          type="number"
-          placeholder="Enter preparation time"
-          className="w-full md:w-1/2"
-          {...register("AvgPreparationTime", { valueAsNumber: true })}
-          error={errors.AvgPreparationTime?.message}
-        />
-
-        <Input
-          label="Display Order"
-          type="number"
-          placeholder="Enter display order"
-          className="w-full md:w-1/2"
-          {...register("displayOrder", { valueAsNumber: true })}
-          error={errors.displayOrder?.message}
-        />
-
-        <Input
-          label="Color (Hex Code)"
-          placeholder="#FF5722"
-          className="w-full md:w-1/2"
-          {...register("color")}
-          error={errors.color?.message}
         />
 
         <div className="flex justify-start">
           <Button
             type="submit"
             className="submit-button w-[5rem]"
-            disabled={isSubmitting || creatingDepartment || updatingDepartment}
+            disabled={isSubmitting || creatingFloor || updatingFloor}
           >
             <div className="flex justify-center items-center gap-[0.5rem] text-white ">
               {translate("Submit")}
