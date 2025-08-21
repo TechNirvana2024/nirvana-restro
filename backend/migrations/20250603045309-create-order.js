@@ -47,7 +47,7 @@ module.exports = {
         defaultValue: "cash",
       },
       orderType: {
-        type: Sequelize.ENUM("dineIn", "takeaway", "delivery"),
+        type: Sequelize.ENUM("dineIn", "takeaway"),
         allowNull: false,
       },
       isGuestOrder: {
