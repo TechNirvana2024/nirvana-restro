@@ -130,6 +130,24 @@ export const SideMenuList: SideListMenuType[] = [
         path: "/admin/settings/list",
         icon: <MdDisplaySettings />,
       },
+      {
+        key: 9.2,
+        name: "Department",
+        path: "/admin/department/list",
+        icon: <MdOutlineFactCheck />,
+      },
+      {
+        key: 9.3,
+        name: "Floor",
+        path: "/admin/floor/list",
+        icon: <MdOutlineFactCheck />,
+      },
+      {
+        key: 9.4,
+        name: "Table",
+        path: "/admin/table/list",
+        icon: <MdOutlineFactCheck />,
+      },
     ],
   },
 ];
