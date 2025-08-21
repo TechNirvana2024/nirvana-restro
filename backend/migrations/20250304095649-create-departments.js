@@ -1,45 +1,51 @@
 "use strict";
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("product_categories", {
+    await queryInterface.createTable("departments", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+
       name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(100),
         allowNull: false,
+        unique: true,
       },
       slug: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
-      imageUrl: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      imageUrlSecondary: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       description: {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      orders: {
-        type: Sequelize.INTEGER,
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
         allowNull: false,
-        defaultValue: 0,
       },
-      loyaltyRequired: {
+      AvgPreparationTime: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
+        validate: { min: 0 },
+      },
+      displayOrder: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
         defaultValue: 0,
+        validate: { min: 0 },
+      },
+      color: {
+        type: Sequelize.STRING(7),
+        allowNull: true,
+        validate: {
+          is: /^#[0-9A-F]{6}$/i,
+        },
       },
       createdAt: {
         allowNull: false,
@@ -57,6 +63,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("product_categories");
+    await queryInterface.dropTable("departments");
   },
 };

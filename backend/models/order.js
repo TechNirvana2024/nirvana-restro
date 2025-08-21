@@ -31,24 +31,11 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      customerId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: "customers",
-          key: "id",
-        },
-      },
-
       tableId: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       sessionId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-      },
-      billId: {
         type: DataTypes.UUID,
         allowNull: true,
       },
@@ -89,11 +76,6 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: 0.0,
       },
-      orderDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
       orderNote: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -102,9 +84,17 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      orderStartTime:{
+        type:DataTypes.DATE,
+        allowNull:false,
+      },
+      orderFinishTime:{
+       type:DataTypes.DATE,
+        allowNull:true,
+      },
       customerName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       customerPhone: {
         type: DataTypes.STRING,

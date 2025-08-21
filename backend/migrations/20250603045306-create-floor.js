@@ -1,37 +1,29 @@
 "use strict";
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("email_templates", {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("floors", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      templateName: {
+      floorNo: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      templateKey: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      variables: {
-        type: Sequelize.JSON,
-        allowNull: true,
-      },
-      subject: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      alternateText: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      body: {
+      description: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       createdAt: {
         allowNull: false,
@@ -48,7 +40,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("email_templates");
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("floors");
   },
 };
