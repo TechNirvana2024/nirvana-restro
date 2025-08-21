@@ -28,10 +28,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       type: {
         type: Sequelize.ENUM("indoor", "outdoor", "vip", "regular"),
         allowNull: false,
@@ -47,7 +43,6 @@ module.exports = {
         type: Sequelize.ENUM(
           "available",
           "occupied",
-          "reserved",
           "maintenance",
         ),
         allowNull: false,
