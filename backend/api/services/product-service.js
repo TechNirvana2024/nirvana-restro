@@ -61,14 +61,14 @@ const list = async (req) => {
         [Op.like]: `%${slug}%`,
       };
     }
-    const order = [["order", "ASC"]];
+    const orders = [["order", "ASC"]];
 
     const result = await paginate(productModel, {
       limit,
       page,
       filters,
       include,
-      order,
+      orders,
     });
 
     if (!result) {

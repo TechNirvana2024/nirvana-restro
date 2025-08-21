@@ -7,10 +7,7 @@ import MediaImages from "@/pages/Media/mediaImages";
 import Roles from "@/pages/Roles";
 import Users from "@/pages/Users";
 import ApproveRequest from "@/pages/ApproveRequest";
-import Seo from "@/pages/Seo";
 import Settings from "@/pages/Settings";
-import QNA from "@/pages/qna";
-import Sort from "@/pages/qna/sort";
 import EmailTemplate from "@/pages/EmailTemplate";
 import AddEditEmailTemplate from "@/pages/EmailTemplate/AddEditEmailTemplate";
 import EmailSmtp from "@/pages/EmailSmtp";
@@ -22,10 +19,14 @@ import AddEditProduct from "@/pages/Product/AddEditProduct";
 import ProductVariant from "@/pages/ProductVariant";
 import AddEditProductVariant from "@/pages/ProductVariant/AddEditProductVariant";
 import Customer from "@/pages/Customer";
-import Contact from "@/pages/Contact";
 import Order from "@/pages/Order";
-import Banner from "@/pages/Banner";
-import AddEditBanner from "@/pages/Banner/AddEditBanner";
+import Department from "@/pages/Department";
+import AddEditDepartment from "@/pages/Department/AddEditDepartment";
+import Floor from "@/pages/Floor";
+import AddEditFloor from "@/pages/Floor/AddEditFloor";
+import OrderTable from "@/pages/Table";
+import AddEditTable from "@/pages/Table/AddEditTable";
+import AddEditOrder from "@/pages/Order/AddEditOrder";
 
 export const adminLinks = [
   {
@@ -64,22 +65,9 @@ export const adminLinks = [
     path: "/profile",
     element: <UserProfile />,
   },
-
-  {
-    path: "/seo/list",
-    element: <Seo />,
-  },
   {
     path: "/settings/list",
     element: <Settings />,
-  },
-  {
-    path: "/faq/list",
-    element: <QNA />,
-  },
-  {
-    path: "/faq/sort",
-    element: <Sort />,
   },
   {
     path: "/email-template/list",
@@ -142,19 +130,51 @@ export const adminLinks = [
     element: <Customer />,
   },
   {
-    path: "contact",
-    element: <Contact />,
-  },
-  {
     path: "/order/list",
     element: <Order />,
   },
   {
-    path: "/banner/list",
-    element: <Banner />,
+    path: "/order/",
+    element: <AddEditOrder />,
   },
   {
-    path: "/banner/:id",
-    element: <AddEditBanner />,
+    path: "/order/:id",
+    element: <AddEditOrder />,
+  },
+  {
+    path: "/department/list",
+    element: <Department />,
+  },
+  {
+    path: "/department/:id",
+    element: <AddEditDepartment />,
+  },
+  {
+    path: "/department/",
+    element: <AddEditDepartment />,
+  },
+  {
+    path: "/floor/list",
+    element: <Floor />,
+  },
+  {
+    path: "/floor/:id",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "/floor/",
+    element: <AddEditFloor />,
+  },
+  {
+    path: "/table/list",
+    element: <OrderTable />,
+  },
+  {
+    path: "/table/:id",
+    element: <AddEditTable />,
+  },
+  {
+    path: "/table/",
+    element: <AddEditTable />,
   },
 ];
