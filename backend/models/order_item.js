@@ -43,6 +43,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      //make department required
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -69,7 +70,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       status: {
-        type: DataTypes.ENUM("pending", "preparing", "ready", "served"),
+        type: DataTypes.ENUM("pending", "preparing", "ready", "served","cancelled"),
         defaultValue: "pending",
       },
     },

@@ -1,5 +1,6 @@
-const { Op } = require("sequelize");
-const { v4: uuidv4 } = require("uuid");
+const { Op} = require("sequelize");
+
+const generateUUID  = require("../../utils/uuidGenerator");
 
 const {
   customerModel,
@@ -8,6 +9,7 @@ const {
   productModel,
   tableModel,
   productMediaModel,
+  sequelize
 } = require("../../models");
 
 const { withTransaction } = require("../../helpers/order/transaction");
@@ -15,186 +17,51 @@ const { withTransaction } = require("../../helpers/order/transaction");
 const paginate = require("../../utils/paginate");
 
 const createOrder = async (req) => {
-  const {
-    orderType,
-    tableId,
-    customerId,
-    customerName,
-    customerPhone,
-    customerEmail,
-    orderItems,
-    orderNote,
-    estimatedTime,
-    deliveryAddress,
-    paymentMethod,
-  } = req.body;
-
-  return withTransaction(async (t) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { orderType, tableId, orderItems = [] } = req.body;
+    let table = null;
     let sessionId = null;
 
     if (orderType === "dineIn") {
-      const table = await tableModel.findByPk(tableId, {
-        lock: t.LOCK.UPDATE,
-        transaction: t,
-      });
-
+      table = await tableModel.findByPk(tableId, { transaction });
       if (!table) {
-        return { status: 404, success: false, message: "Table not available" };
+        await transaction.rollback();
+        return { status: 404, success: false, message: "Table not found" };
       }
 
-      sessionId = table.currentSessionId;
-
       if (table.status === "available") {
-        sessionId = uuidv4();
+        sessionId = generateUUID();
         await table.update(
           {
             status: "occupied",
-            currentSessionId: sessionId,
+            sessionId,
             sessionStartTime: new Date(),
           },
-          { transaction: t },
+          { transaction }
         );
+      } else {
+        sessionId = table.sessionId;
       }
-    }
-
-    // Validate customer if customerId is provided
-    if (customerId) {
-      const customer = await customerModel.findByPk(customerId, {
-        transaction: t,
-      });
-      if (!customer) {
-        return { status: 404, success: false, message: "Customer not found" };
-      }
-    }
-
-    let totalAmount = 0;
-    const validatedItems = [];
-
-    for (const item of orderItems) {
-      const product = await productModel.findByPk(item.productId, {
-        lock: t.LOCK.UPDATE,
-        transaction: t,
-      });
-
-      if (!product) {
-        return {
-          status: 404,
-          success: false,
-          message: `Product with ID ${item.productId} not found`,
-        };
-      }
-
-      if (product.quantity < item.quantity) {
-        return {
-          status: 400,
-          success: false,
-          message: `Insufficient stock for ${product.name}. Available: ${product.quantity}, Requested: ${item.quantity}`,
-        };
-      }
-
-      const itemPrice = parseFloat(product.price);
-      const itemSubtotal = itemPrice * item.quantity;
-      totalAmount += itemSubtotal;
-
-      validatedItems.push({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: itemPrice,
-        subtotal: itemSubtotal,
-        specialInstructions: item.specialInstructions || null,
-        departmentId: item.departmentId || null,
-      });
     }
 
     const order = await orderModel.create(
       {
-        customerId: customerId || null,
-        tableId: orderType === "dineIn" ? tableId : null,
-        sessionId: sessionId,
-        orderType: orderType,
-        status: "pending",
-        paymentStatus: "pending",
-        paymentMethod: paymentMethod || "cash",
-        isGuestOrder: !customerId,
-        totalAmount: totalAmount,
-        orderNote: orderNote || null,
-        estimatedTime: estimatedTime || null,
-        customerName: customerName,
-        customerPhone: customerPhone || null,
-        customerEmail: customerEmail || null,
-        deliveryAddress: orderType === "delivery" ? deliveryAddress : null,
+        ...req.body,
+        sessionId,
+        orderStartTime: new Date(),
       },
-      { transaction: t },
+      { transaction }
     );
 
-    const orderItemsData = validatedItems.map((item) => ({
-      ...item,
-      orderId: order.id,
-    }));
-
-    await orderItemModel.bulkCreate(orderItemsData, { transaction: t });
-
-    for (const item of validatedItems) {
-      await productModel.decrement("quantity", {
-        by: item.quantity,
-        where: { id: item.productId },
-        transaction: t,
-      });
-    }
-
-    const responseData = { order };
-    if (orderType === "dineIn") {
-      const table = await tableModel.findByPk(tableId, { transaction: t });
-      responseData.sessionId = sessionId;
-      responseData.tableNumber = table.tableNo;
-    }
-
-    return {
-      status: 201,
-      success: true,
-      message: `${orderType.charAt(0).toUpperCase() + orderType.slice(1)} order created successfully`,
-      data: responseData,
-    };
-  });
-};
-
-const addItemsToExistingOrder = async (req) => {
-  const { orderId } = req.params;
-  const { orderItems } = req.body;
-
-  return withTransaction(async (t) => {
-    const order = await orderModel.findByPk(orderId, {
-      include: [
-        {
-          model: tableModel,
-          as: "table",
-        },
-      ],
-      transaction: t,
-    });
-
-    if (!order) {
-      return { status: 404, success: false, message: "Order not found" };
-    }
-
-    if (order.status === "completed" || order.status === "cancelled") {
-      return {
-        status: 400,
-        success: false,
-        message: "Cannot add items to completed or cancelled order",
-      };
-    }
-
-    let additionalAmount = 0;
-    const validatedItems = [];
+    let totalAmount = 0;
 
     for (const item of orderItems) {
       const product = await productModel.findByPk(item.productId, {
-        lock: t.LOCK.UPDATE,
-        transaction: t,
+        transaction,
       });
-
       if (!product) {
+        await transaction.rollback();
         return {
           status: 404,
           success: false,
@@ -202,60 +69,127 @@ const addItemsToExistingOrder = async (req) => {
         };
       }
 
-      if (product.quantity < item.quantity) {
+      const subtotal = product.price * item.quantity;
+      totalAmount += subtotal;
+
+      await orderItemModel.create(
+        {
+          ...item,
+          orderId: order.id,
+          price: product.price,
+          departmentId: product.departmentId,
+          subtotal,
+        },
+        { transaction }
+      );
+    }
+
+    await order.update({ totalAmount }, { transaction });
+
+    await transaction.commit();
+
+    return {
+      status: 201,
+      success: true,
+      message: "Order created successfully",
+      data: order,
+    };
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
+const updateOrderItems = async (req) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { orderId } = req.params;
+    const { items = [] } = req.body;
+
+    const order = await orderModel.findByPk(orderId, {
+      include: [{ model: orderItemModel, as: "orderItems" }],
+      transaction,
+    });
+
+    if (!order) {
+      await transaction.rollback();
+      return { status: 404, success: false, message: "Order not found" };
+    }
+
+    for (const incoming of items) {
+      const existing = order.orderItems.find((oi) => oi.id === incoming.id);
+      if (!existing) {
+        await transaction.rollback();
         return {
-          status: 400,
+          status: 404,
           success: false,
-          message: `Insufficient stock for ${product.name}. Available: ${product.quantity}, Requested: ${item.quantity}`,
+          message: `Order item ${incoming.id} not found`,
         };
       }
 
-      const itemPrice = parseFloat(product.price);
-      const itemSubtotal = itemPrice * item.quantity;
-      additionalAmount += itemSubtotal;
+      // Check for status change
+      if (incoming.status && incoming.status !== existing.status) {
+        if (incoming.status === "cancelled") {
+          if (existing.status === "preparing") {
+            await transaction.rollback();
+            return {
+              status: 400,
+              success: false,
+              message: `Cannot cancel item ${existing.id}, already in preparing`,
+            };
+          }
+          await existing.update(
+            { status: "cancelled", subtotal: 0 },
+            { transaction }
+          );
+          continue; // skip quantity check since it's cancelled
+        }
+      }
 
-      validatedItems.push({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: itemPrice,
-        subtotal: itemSubtotal,
-        specialInstructions: item.specialInstructions || null,
-      });
+      // Check for quantity change
+      if (incoming.quantity !== undefined && incoming.quantity !== existing.quantity) {
+        if (incoming.quantity < existing.quantity && existing.status === "preparing") {
+          await transaction.rollback();
+          return {
+            status: 400,
+            success: false,
+            message: `Cannot decrease quantity for item ${existing.id}, already in preparing`,
+          };
+        }
+
+        const newSubtotal = existing.price * incoming.quantity;
+        await existing.update(
+          { quantity: incoming.quantity, subtotal: newSubtotal },
+          { transaction }
+        );
+      }
     }
 
-    const orderItemsData = validatedItems.map((item) => ({
-      ...item,
-      orderId: order.id,
-    }));
+    // Recalculate order total (exclude cancelled)
+    const validItems = await orderItemModel.findAll({
+      where: { orderId, status: { [Op.ne]: "cancelled" } },
+      transaction,
+    });
 
-    await orderItemModel.bulkCreate(orderItemsData, { transaction: t });
-
-    await order.update(
-      {
-        totalAmount: parseFloat(order.totalAmount) + additionalAmount,
-      },
-      { transaction: t },
+    const totalAmount = validItems.reduce(
+      (sum, item) => sum + Number(item.subtotal),
+      0
     );
 
-    for (const item of validatedItems) {
-      await productModel.decrement("quantity", {
-        by: item.quantity,
-        where: { id: item.productId },
-        transaction: t,
-      });
-    }
+    await order.update({ totalAmount }, { transaction });
+
+    await transaction.commit();
 
     return {
       status: 200,
       success: true,
-      message: "Items added to order successfully",
-      data: {
-        orderId: order.id,
-        additionalAmount,
-        newTotal: order.totalAmount,
-      },
+      message: "Order items updated successfully",
+      data: order,
     };
-  });
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 };
 
 const getTableActiveOrders = async (req) => {
@@ -268,16 +202,12 @@ const getTableActiveOrders = async (req) => {
       return { status: 404, success: false, message: "Table not found" };
     }
 
-    if (!table.currentSessionId) {
+    if (!table.sessionId) {
       return {
         status: 200,
         success: true,
         message: "No active session for this table",
-        data: {
-          table: { id: table.id, tableNo: table.tableNo, status: table.status },
-          orders: [],
-          sessionTotal: 0,
-        },
+        data: null
       };
     }
 
@@ -340,78 +270,87 @@ const getTableActiveOrders = async (req) => {
   }
 };
 
-const closeTableSession = async (req) => {
-  const { tableId } = req.params;
+const checkoutOrder = async (req) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { id } = req.params;
+    let { customerId, customerDetails, ...updateData } = req.body;
 
-  return withTransaction(async (t) => {
-    const table = await tableModel.findByPk(tableId, {
-      lock: t.LOCK.UPDATE,
-      transaction: t,
-    });
-
-    if (!table) {
-      return { status: 404, success: false, message: "Table not found" };
+    const order = await orderModel.findByPk(id, { transaction });
+    if (!order) {
+      await transaction.rollback();
+      return { status: 404, success: false, message: "Order not found" };
     }
 
-    if (!table.currentSessionId) {
+    if (
+      ["paid", "failed"].includes(order.paymentStatus) ||
+      ["completed", "cancelled"].includes(order.status)
+    ) {
+      await transaction.rollback();
       return {
         status: 400,
         success: false,
-        message: "No active session to close",
+        message: "Order already processed",
       };
     }
 
-    const unpaidOrders = await orderModel.findAll({
-      where: {
-        sessionId: table.currentSessionId,
-        paymentStatus: { [Op.ne]: "paid" },
-      },
-      transaction: t,
-    });
+    let finalCustomerId = null;
 
-    if (unpaidOrders.length > 0) {
-      return {
-        status: 400,
-        success: false,
-        message: `Cannot close session. ${unpaidOrders.length} unpaid orders remaining`,
-        data: { unpaidOrdersCount: unpaidOrders.length },
-      };
+    if (customerId) {
+      const customer = await customerModel.findByPk(customerId, { transaction });
+      if (!customer) {
+        await transaction.rollback();
+        return { status: 404, success: false, message: "Customer not found" };
+      }
+      finalCustomerId = customer.id;
     }
 
-    await orderModel.update(
-      { status: "completed" },
+    if (customerDetails) {
+      const newCustomer = await customerModel.create(customerDetails, { transaction });
+      if (!newCustomer) {
+        await transaction.rollback();
+        return {
+          status: 500,
+          success: false,
+          message: "Failed to create customer",
+        };
+      }
+      finalCustomerId = newCustomer.id;
+    }
+
+    await order.update(
       {
-        where: {
-          sessionId: table.currentSessionId,
-          status: { [Op.ne]: "completed" },
-        },
-        transaction: t,
+        ...updateData,
+        orderFinishTime: new Date(),
+        customerId: finalCustomerId,
+        isGuestOrder: req.body?.isGuestOrder ?? false,
       },
+      { transaction }
     );
 
-    await table.update(
-      {
-        status: "available",
-        currentSessionId: null,
-        sessionStartTime: null,
-      },
-      { transaction: t },
-    );
+    await tableModel.update({
+      status: "available",
+      sessionId: null,
+      sessionStartTime: null,
+    }, {
+      where: { id: order.tableId },
+      transaction,
+    })
+    await transaction.commit();
 
     return {
       status: 200,
       success: true,
-      message: "Table session closed successfully",
-      data: {
-        tableId: table.id,
-        tableNo: table.tableNo,
-        status: table.status,
-      },
+      message: "Order checked out successfully",
+      data: order,
     };
-  });
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 };
 
-// Admin services
+
 const getOrderById = async (req) => {
   const { id } = req.params;
 
@@ -602,50 +541,113 @@ const updateOrderStatus = async (req) => {
   });
 };
 
-const updateOrderItemStatus = async (req) => {
-  const { orderItemId } = req.params;
-  const { status } = req.body;
+// this is for waiters to mark order items as served
+const bulkServeOrderItems = async (req) => {
+  const { orderItemIds } = req.body; // array of orderItem ids
 
   try {
-    const orderItem = await orderItemModel.findByPk(orderItemId, {
-      include: [
-        {
-          model: productModel,
-          as: "product",
-        },
-      ],
+
+
+    // fetch order items
+    const orderItems = await orderItemModel.findAll({
+      where: { id: orderItemIds ,status: "ready" },
     });
 
-    if (!orderItem) {
-      return { status: 404, success: false, message: "Order item not found" };
+    if (orderItems.length === 0) {
+      return { status: 404, success: false, message: "Order items not found or not ready yet" };
     }
 
-    await orderItem.update({ status });
+    await Promise.all(
+      orderItems.map((item) => item.update({ status: "served" }))
+    );
 
     return {
       status: 200,
       success: true,
-      message: "Order item status updated successfully",
-      data: orderItem,
+      message: "Order items served successfully",
+      data: orderItems,
     };
   } catch (error) {
-    console.error("Update order item status error:", error);
-    return {
-      status: 500,
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    };
+   throw error
   }
 };
 
+// this is for departments to update order item status
+const updateOrderItemsStatus = async (req) => {
+  let { orderItemIds } = req.body; 
+  const { status } = req.body; 
+
+
+  const transaction = await sequelize.transaction();
+
+  try {
+    const orderItems = await orderItemModel.findAll({
+      where: { id: orderItemIds },
+      transaction,
+    });
+
+    if (!orderItems.length) {
+      await transaction.rollback();
+      return { status: 404, success: false, message: "Order item(s) not found" };
+    }
+
+    const invalidItems = [];
+
+    for (const item of orderItems) {
+      // enforce transitions: pending->preparing, preparing->ready
+      if (
+        (status === "preparing" && item.status !== "pending") ||
+        (status === "ready" && item.status !== "preparing")
+      ) {
+        invalidItems.push({
+          id: item.id,
+          currentStatus: item.status,
+          attemptedStatus: status,
+        });
+        continue;
+      }
+
+      await item.update({ status }, { transaction });
+    }
+
+    if (invalidItems.length > 0) {
+      await transaction.rollback();
+      return {
+        status: 400,
+        success: false,
+        message: "Some order items could not be updated due to invalid transitions",
+        invalidItems,
+      };
+    }
+
+    await transaction.commit();
+    return {
+      status: 200,
+      success: true,
+      message: `Order item(s) updated to ${status} successfully`,
+      data: orderItems,
+    };
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
+
 module.exports = {
-  createOrder,
-  addItemsToExistingOrder,
   getTableActiveOrders,
-  closeTableSession,
   getOrderById,
   listOrders,
   updateOrderStatus,
-  updateOrderItemStatus,
+  
+  // waiter services
+  createOrder,
+  updateOrderItems,
+  bulkServeOrderItems,
+
+  // cashier services
+  checkoutOrder,
+
+  //department services
+  updateOrderItemsStatus,
 };

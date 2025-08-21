@@ -20,6 +20,11 @@ module.exports = (sequelize) => {
         as: "table",
         onDelete: "SET NULL",
       });
+      Order.belongsTo(models.customerId, {
+        foreignKey: "customerId",
+        as: "customer",
+        onDelete: "SET NULL",
+      });
     }
   }
 
@@ -42,9 +47,6 @@ module.exports = (sequelize) => {
       status: {
         type: DataTypes.ENUM(
           "pending",
-          "confirmed",
-          "preparing",
-          "ready",
           "completed",
           "cancelled",
         ),
