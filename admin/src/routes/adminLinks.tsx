@@ -20,8 +20,6 @@ import ProductVariant from "@/pages/ProductVariant";
 import AddEditProductVariant from "@/pages/ProductVariant/AddEditProductVariant";
 import Customer from "@/pages/Customer";
 import Order from "@/pages/Order";
-import Banner from "@/pages/Banner";
-import AddEditBanner from "@/pages/Banner/AddEditBanner";
 import Department from "@/pages/Department";
 import AddEditDepartment from "@/pages/Department/AddEditDepartment";
 import Floor from "@/pages/Floor";
@@ -133,14 +131,6 @@ export const adminLinks = [
   {
     path: "/order/list",
     element: <Order />,
-  },
-  {
-    path: "/banner/list",
-    element: <Banner />,
-  },
-  {
-    path: "/banner/:id",
-    element: <AddEditBanner />,
   },
   {
     path: "/department/list",
