@@ -1,10 +1,17 @@
-import Input from "@/components/Input";
-import TextArea from "@/components/TextArea";
-import { CONTACT_URL } from "@/constants/apiUrlConstants";
+import React from "react";
+import { CONTACT_URL, ORDER_URL } from "@/constants/apiUrlConstants";
 import { useGetApiQuery } from "@/redux/services/crudApi";
 import { RiSeoLine } from "react-icons/ri";
+import { dummyTables } from "../../tempDatas/table";
+import { dummyOrders } from "../../tempDatas/order";
+import { Link } from "react-router-dom";
 
-export default function ViewTableOrder({ id }: { id: number | null }) {
+interface ViewTableOrderProps {
+  id: number | null;
+  onCheckout: (tableId: number) => void;
+}
+
+const ViewTableOrder: React.FC<ViewTableOrderProps> = ({ id, onCheckout }) => {
   const {
     data: contactData,
     isSuccess: success,
@@ -16,46 +23,78 @@ export default function ViewTableOrder({ id }: { id: number | null }) {
     },
   );
 
+  const table = dummyTables.find((table) => table.id === id);
+  const orders = dummyOrders.filter((order) => order.tableId === String(id));
+
   return (
-    <div>
-      {/* Tab Section */}
-      <div className="flex mt-[4rem] mb-[1.5rem]">
-        <p className="flex items-center gap-[6px] px-[20px] py-[8px] rounded-[0.25rem] bg-primaryColor text-white">
+    <div className="p-4">
+      <div className="flex justify-between items-center mt-[4rem] mb-[1.5rem]">
+        <h2 className="text-xl font-semibold text-gray-800">
+          Table {table?.tableNo || id}
+        </h2>
+        <Link
+          to={`/admin/${ORDER_URL}${id}`}
+          className="flex items-center gap-[6px] px-[20px] py-[8px] rounded-[0.25rem] bg-primaryColor text-white"
+        >
           <RiSeoLine />
-          <p className="font-[500] text-[15px]">Contact {id}</p>
-        </p>
+          <span className="font-[500] text-[15px]">Add Order</span>
+        </Link>
       </div>
+
       {loading ? (
-        <>Loading </>
+        <div className="text-gray-600">Loading...</div>
       ) : (
-        <div className="flex gap-[1.5rem] mb-[2.5rem]">
-          <form className="grid grid-cols-1 gap-[1.5rem] w-full">
-            <Input
-              label="Name"
-              type="text"
-              value={contactData?.data?.full_name}
-              disabled
-            />
-            <Input
-              label="Email"
-              type="text"
-              value={contactData?.data?.email}
-              disabled
-            />
-            <Input
-              label="Subject"
-              type="text"
-              value={contactData?.data?.subject}
-              disabled
-            />
-            <TextArea
-              label="Message"
-              value={contactData?.data?.message}
-              disabled
-            />
-          </form>
+        <div className="flex flex-col gap-[1.5rem] mb-[2.5rem]">
+          {orders.length === 0 ? (
+            <div className="text-gray-600 text-center">
+              No orders for this table
+            </div>
+          ) : (
+            orders.map((order) => (
+              <div key={order.id} className="bg-white rounded-lg shadow-md p-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  Order #{order.orderNumber}
+                </h3>
+                <div className="space-y-2">
+                  {order.orderItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-start border-b border-gray-200 py-2"
+                    >
+                      <div className="text-sm text-gray-600">
+                        <p className="font-medium">{item.productName}</p>
+                        <p>Qty: {item.quantity}</p>
+                        {item.specialInstructions && (
+                          <p className="text-xs italic">
+                            Note: {item.specialInstructions}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600 text-right">
+                        <p>${item.productPrice.toFixed(2)} each</p>
+                        <p>Subtotal: ${item.subtotal.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between items-center mt-4">
+                  <p className="text-lg font-semibold text-gray-800">
+                    Total: ${order.totalAmount.toFixed(2)}
+                  </p>
+                  <button
+                    onClick={() => onCheckout(id!)}
+                    className="flex items-center gap-[6px] px-[20px] py-[8px] rounded-[0.25rem] bg-green-600 text-white hover:bg-green-700"
+                  >
+                    <span className="font-[500] text-[15px]">Checkout</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
   );
-}
+};
+
+export default ViewTableOrder;

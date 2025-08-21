@@ -74,7 +74,10 @@ export default function AddEditOrder({
   const tableData = useMemo(
     () => ({
       data: {
-        data: dummyTables.filter((table) => table.status === "available"),
+        data: dummyTables.filter(
+          (table) =>
+            table.status === "available" || table.status === "occupied",
+        ),
       },
     }),
     [],
@@ -102,9 +105,9 @@ export default function AddEditOrder({
   const tableOptions = useMemo(() => {
     if (!tableData?.data?.data) return [];
     return tableData.data.data.map(
-      (table: { id: string; tableNumber: string }) => ({
+      (table: { id: string; tableNo: string }) => ({
         value: table.id,
-        label: `Table ${table.tableNumber}`,
+        label: `Table ${table.tableNo}`,
       }),
     );
   }, [tableData]);
@@ -222,6 +225,7 @@ export default function AddEditOrder({
 
               {watchedOrderType === "dineIn" && (
                 <Controller
+                  defaultValue={id || ""}
                   name="tableId"
                   control={control}
                   render={({ field }) => (
@@ -237,7 +241,7 @@ export default function AddEditOrder({
                 />
               )}
 
-              <Input
+              {/* <Input
                 label="Customer Name"
                 placeholder="Enter customer name"
                 className="w-full"
@@ -269,7 +273,7 @@ export default function AddEditOrder({
                 className="w-full"
                 {...register("estimatedTime", { valueAsNumber: true })}
                 error={errors.estimatedTime?.message}
-              />
+              /> */}
             </div>
 
             {watchedOrderType === "delivery" && (
