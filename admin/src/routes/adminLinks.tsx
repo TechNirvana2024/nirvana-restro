@@ -26,6 +26,7 @@ import Floor from "@/pages/Floor";
 import AddEditFloor from "@/pages/Floor/AddEditFloor";
 import OrderTable from "@/pages/Table";
 import AddEditTable from "@/pages/Table/AddEditTable";
+import AddEditOrder from "@/pages/Order/AddEditOrder";
 
 export const adminLinks = [
   {
@@ -131,6 +132,14 @@ export const adminLinks = [
   {
     path: "/order/list",
     element: <Order />,
+  },
+  {
+    path: "/order/",
+    element: <AddEditOrder />,
+  },
+  {
+    path: "/order/:id",
+    element: <AddEditOrder />,
   },
   {
     path: "/department/list",

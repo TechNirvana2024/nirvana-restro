@@ -12,12 +12,9 @@ const create = async (req) => {
   try {
     req.body.slug = slugGenerator(req.body.name);
     const productCategory = await productCategoryModel.create(req.body);
-    await productCategory.update(
-      {
-        order: productCategory?.id,
-      },
-      { transaction },
-    );
+    await productCategory.update({
+      order: productCategory?.id,
+    });
 
     if (!productCategory) {
       return {
@@ -40,14 +37,14 @@ const list = async (req) => {
     let { limit, page } = req.query;
     const filters = {};
     const include = [];
-    const order = [["order", "ASC"]];
+    const orders = [["order", "ASC"]];
 
     const result = await paginate(productCategoryModel, {
       limit,
       page,
       filters,
       include,
-      order,
+      orders,
     });
 
     if (!result) {
