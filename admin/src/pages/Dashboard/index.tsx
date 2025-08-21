@@ -5,6 +5,9 @@ import { FRONTEND_BASE_URL } from "@/constants";
 import { format, getHours } from "date-fns";
 import RestroTable from "@/components/RestroTable";
 import { useAppSelector } from "@/redux/store/hooks";
+import { useState } from "react";
+import Drawer from "@/components/Drawer";
+import ViewTableOrder from "./ViewTableOrder";
 
 const getPartOfDay = (date: Date = new Date()): string => {
   const hour = getHours(date); // Get hour (0–23) from the provided or current date
@@ -15,21 +18,36 @@ const getPartOfDay = (date: Date = new Date()): string => {
 };
 
 export default function Dashboard() {
+  const [restroTableId, setRestroTableId] = useState<number | null>(null);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+
+  function handleTableClick(id: number) {
+    setRestroTableId(id);
+    setOpenDrawer(true);
+  }
+
   return (
     <PageContent>
       <div>
         <Header />
-        <Tables />
+        <Tables chooseTable={handleTableClick} />
       </div>
+      <Drawer
+        isOpen={openDrawer}
+        setIsOpen={setOpenDrawer}
+        width="w-full lg:w-[30%]"
+      >
+        <ViewTableOrder id={restroTableId} />
+      </Drawer>
     </PageContent>
   );
 }
 
-function Tables() {
+function Tables({ chooseTable }: { chooseTable: (id: number) => void }) {
   return (
     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {tables.map((table) => (
-        <RestroTable table={table} />
+        <RestroTable onClick={chooseTable} table={table} />
       ))}
     </div>
   );

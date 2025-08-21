@@ -16,20 +16,22 @@ interface Table {
 
 interface RestroTableProps {
   table: Table;
+  onClick: (id: number) => void;
 }
 
-const RestroTable: React.FC<RestroTableProps> = ({ table }) => {
+const RestroTable: React.FC<RestroTableProps> = ({ table, onClick }) => {
   return (
     <div
-      className={`p-4 bg-white rounded-lg shadow-md border-l-4 
+      onClick={() => table.status !== "maintenance" && onClick(table.id)}
+      className={`p-4 bg-white hover:cursor-pointer rounded-lg shadow-md border-l-4 
         ${
           table.status === "available"
-            ? "border-green-500 hover:cursor-pointer"
+            ? "border-green-500"
             : table.status === "occupied"
               ? "border-red-500"
               : table.status === "reserved"
                 ? "border-yellow-500"
-                : "border-gray-500"
+                : "border-gray-500 hover:cursor-default"
         } 
         hover:shadow-lg transition-shadow duration-200`}
     >
