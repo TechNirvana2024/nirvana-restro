@@ -164,39 +164,39 @@ export const adminLinks = [
     element: <AddEditBanner />,
   },
   {
-    path: "department/list",
+    path: "/department/list",
     element: <Department />,
   },
   {
-    path: "department/:id",
+    path: "/department/:id",
     element: <AddEditDepartment />,
   },
   {
-    path: "department/",
-    Element: <AddEditDepartment />,
+    path: "/department/",
+    element: <AddEditDepartment />,
   },
   {
-    path: "floor/list",
+    path: "/floor/list",
     element: <Floor />,
   },
   {
-    path: "floor/:id",
+    path: "/floor/:id",
     element: <AddEditFloor />,
   },
   {
-    path: "floor/",
+    path: "/floor/",
     element: <AddEditFloor />,
   },
   {
-    path: "table/list",
+    path: "/table/list",
     element: <OrderTable />,
   },
   {
-    path: "table/:id",
+    path: "/table/:id",
     element: <AddEditTable />,
   },
   {
-    path: "table/",
+    path: "/table/",
     element: <AddEditTable />,
   },
 ];

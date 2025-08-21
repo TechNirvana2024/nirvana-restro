@@ -3,20 +3,25 @@ import Drawer from "@/components/Drawer";
 import PageHeader from "@/components/PageHeader";
 import PageTitle from "@/components/PageTitle";
 import Table from "@/components/Table";
-import { CONTACT_URL } from "@/constants/apiUrlConstants";
+import { FLOOR_URL } from "@/constants/apiUrlConstants";
 import usePagination from "@/hooks/usePagination";
 import { useDeleteApiMutation, useGetApiQuery } from "@/redux/services/crudApi";
 import { checkAccess } from "@/utils/accessHelper";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
-import ViewContact from "./ViewContact";
+import ViewFloor from "./ViewFloor";
 import Spinner from "@/components/Spinner";
+import { FLOOR_ADD_ROUTE } from "@/routes/routeNames";
+import { useNavigate } from "react-router-dom";
+import { MdEditSquare } from "react-icons/md";
 
-interface ContactResponseType {
+interface FloorResponseType {
   id: number;
-  full_name: string;
-  email: string;
+  floorNo: string;
+  name: string;
+  description: string;
+  isActive: boolean;
 }
 
 export default function Floor() {
@@ -30,13 +35,15 @@ export default function Floor() {
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [drawerId, setOpenDrawerId] = useState<number | null>(null);
 
+  const navigate = useNavigate();
+
   const {
-    data: allContact,
+    data: allFloor,
     isSuccess: success,
     isLoading: loading,
     refetch,
-  } = useGetApiQuery({ url: `${CONTACT_URL}list`, ...query });
-  const [deleteBanner] = useDeleteApiMutation();
+  } = useGetApiQuery({ url: `${FLOOR_URL}list`, ...query });
+  const [deleteFloor] = useDeleteApiMutation();
 
   const handleReload = () => {
     refetch();
@@ -47,6 +54,12 @@ export default function Floor() {
     setOpenDrawer(true);
   };
 
+  const handleNewButton = (id: number | null) => {
+    id === null
+      ? navigate(FLOOR_ADD_ROUTE)
+      : navigate(`${FLOOR_ADD_ROUTE}${id}`);
+  };
+
   const handleDeleteTrigger = (id: number) => {
     setDeletedId(id);
     setOpen(true);
@@ -54,10 +67,12 @@ export default function Floor() {
 
   const handleDelete = async () => {
     try {
-      const response = await deleteBanner(`${CONTACT_URL}${deleteId}`).unwrap();
+      const response = await deleteFloor(`${FLOOR_URL}${deleteId}`).unwrap();
       handleResponse({
         res: response,
-        onSuccess: () => {},
+        onSuccess: () => {
+          refetch();
+        },
       });
     } catch (error) {
       handleError({ error });
@@ -67,44 +82,61 @@ export default function Floor() {
   };
 
   const pagination = {
-    page: allContact?.data?.page,
-    limit: allContact?.data?.limit,
-    total: allContact?.data?.total,
-    totalPages: allContact?.data?.totalPages,
+    page: allFloor?.data?.page,
+    limit: allFloor?.data?.limit,
+    total: allFloor?.data?.total,
+    totalPages: allFloor?.data?.totalPages,
   };
 
   const tableHeaders = [
+    "Floor No",
     "Name",
-    "Email",
-    // "Subject",
+    "Status",
+    accessList.includes("view") || accessList.includes("edit") || "Edit",
     accessList.includes("delete") && "Actions",
-  ];
+  ].filter(Boolean);
 
   const tableData =
-    success && allContact?.data?.data
-      ? allContact?.data?.data.map(
-          ({ id, full_name, email }: ContactResponseType) => [
-            full_name,
-            email,
-            <div
-              key={id}
-              className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
-            >
-              <FaEye
-                size={18}
-                className="text-[#0090DD]"
-                onClick={() => handleDrawerOpen(id)}
-              />
-              {accessList.includes("delete") && (
+    success && allFloor?.data?.data
+      ? allFloor?.data?.data.map(
+          ({ id, floorNo, name, isActive }: FloorResponseType) =>
+            [
+              floorNo,
+              name,
+              <span
+                key={`status-${id}`}
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  isActive
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {isActive ? "Active" : "Inactive"}
+              </span>,
+              accessList.includes("view") && (
+                <FaEye
+                  size={18}
+                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  onClick={() => handleDrawerOpen(id)}
+                />
+              ),
+              accessList.includes("edit") && (
+                <MdEditSquare
+                  key={`edit-${id}`}
+                  size={18}
+                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  onClick={() => handleNewButton(id)}
+                />
+              ),
+              accessList.includes("delete") && (
                 <DeleteModal
                   open={open}
                   setOpen={setOpen}
                   handleDeleteTrigger={() => handleDeleteTrigger(id)}
                   handleConfirmDelete={handleDelete}
                 />
-              )}
-            </div>,
-          ],
+              ),
+            ].filter(Boolean),
         )
       : [];
 
@@ -114,11 +146,11 @@ export default function Floor() {
 
   return (
     <>
-      <PageTitle title="Contact" />
+      <PageTitle title="Floor Management" />
       <PageHeader
-        hasAddButton={false}
-        newButtonText="Add New Blog"
-        handleNewButton={() => {}}
+        hasAddButton={true}
+        newButtonText="Add New Floor"
+        handleNewButton={() => handleNewButton(null)}
         handleReloadButton={handleReload}
         hasSubText={false}
       />
@@ -138,7 +170,7 @@ export default function Floor() {
         setIsOpen={setOpenDrawer}
         width="w-full lg:w-[30%]"
       >
-        <ViewContact id={drawerId} />
+        <ViewFloor id={drawerId} />
       </Drawer>
     </>
   );

@@ -1,14 +1,9 @@
 import { z } from "zod";
 
-export const ProductCategorySchema = z.object({
+export const DepartmentSchema = z.object({
   name: z.string().min(1, "Name is Required"),
-  imageUrl: z.union([
-    z.string().min(1, "Image Url is Required"),
-    z.array(z.string().min(1, "Each Image Url must be a valid string")),
-  ]),
-  imageUrlSecondary: z.union([
-    z.string().min(1, "Image Url is Required"),
-    z.array(z.string().min(1, "Each Image Url must be a valid string")),
-  ]),
   description: z.string().optional(),
+  AvgPreparationTime: z.number().min(1, "Minimum time must be at least 1."),
+  displayOrder: z.number().optional(),
+  color: z.string().optional(),
 });

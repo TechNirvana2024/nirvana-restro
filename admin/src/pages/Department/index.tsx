@@ -3,20 +3,28 @@ import Drawer from "@/components/Drawer";
 import PageHeader from "@/components/PageHeader";
 import PageTitle from "@/components/PageTitle";
 import Table from "@/components/Table";
-import { CONTACT_URL } from "@/constants/apiUrlConstants";
+import { DEPARTMENT_URL } from "@/constants/apiUrlConstants";
 import usePagination from "@/hooks/usePagination";
 import { useDeleteApiMutation, useGetApiQuery } from "@/redux/services/crudApi";
 import { checkAccess } from "@/utils/accessHelper";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { useState } from "react";
-import { FaEye } from "react-icons/fa";
 import ViewContact from "./ViewContact";
 import Spinner from "@/components/Spinner";
+import { DEPARTMENT_ADD_ROUTE } from "@/routes/routeNames";
+import { useNavigate } from "react-router-dom";
+import { MdEditSquare } from "react-icons/md";
+import { FaEye } from "react-icons/fa";
 
-interface ContactResponseType {
+interface DepartmentResponseType {
   id: number;
-  full_name: string;
-  email: string;
+  name: string;
+  description: string;
+  slug: string;
+  isActive: string;
+  AvgPreparationTime: number;
+  displayOrder: number;
+  color: string;
 }
 
 export default function Department() {
@@ -30,12 +38,14 @@ export default function Department() {
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [drawerId, setOpenDrawerId] = useState<number | null>(null);
 
+  const navigate = useNavigate();
+
   const {
-    data: allContact,
+    data: allDepartment,
     isSuccess: success,
     isLoading: loading,
     refetch,
-  } = useGetApiQuery({ url: `${CONTACT_URL}list`, ...query });
+  } = useGetApiQuery({ url: `${DEPARTMENT_URL}list`, ...query });
   const [deleteBanner] = useDeleteApiMutation();
 
   const handleReload = () => {
@@ -47,6 +57,12 @@ export default function Department() {
     setOpenDrawer(true);
   };
 
+  const handleNewButton = (id: number | null) => {
+    id === null
+      ? navigate(DEPARTMENT_ADD_ROUTE)
+      : navigate(`${DEPARTMENT_ADD_ROUTE}${id}`);
+  };
+
   const handleDeleteTrigger = (id: number) => {
     setDeletedId(id);
     setOpen(true);
@@ -54,7 +70,9 @@ export default function Department() {
 
   const handleDelete = async () => {
     try {
-      const response = await deleteBanner(`${CONTACT_URL}${deleteId}`).unwrap();
+      const response = await deleteBanner(
+        `${DEPARTMENT_URL}${deleteId}`,
+      ).unwrap();
       handleResponse({
         res: response,
         onSuccess: () => {},
@@ -67,34 +85,43 @@ export default function Department() {
   };
 
   const pagination = {
-    page: allContact?.data?.page,
-    limit: allContact?.data?.limit,
-    total: allContact?.data?.total,
-    totalPages: allContact?.data?.totalPages,
+    page: allDepartment?.data?.page,
+    limit: allDepartment?.data?.limit,
+    total: allDepartment?.data?.total,
+    totalPages: allDepartment?.data?.totalPages,
   };
 
   const tableHeaders = [
     "Name",
-    "Email",
-    // "Subject",
+    "Average Preparation Time",
+    accessList.includes("view") || accessList.includes("edit") || "Edit",
     accessList.includes("delete") && "Actions",
   ];
 
   const tableData =
-    success && allContact?.data?.data
-      ? allContact?.data?.data.map(
-          ({ id, full_name, email }: ContactResponseType) => [
-            full_name,
-            email,
+    success && allDepartment?.data?.data
+      ? allDepartment?.data?.data.map(
+          ({ id, name, AvgPreparationTime }: DepartmentResponseType) => [
+            name,
+            AvgPreparationTime,
             <div
               key={id}
               className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
             >
-              <FaEye
-                size={18}
-                className="text-[#0090DD]"
-                onClick={() => handleDrawerOpen(id)}
-              />
+              {accessList.includes("view") && (
+                <FaEye
+                  size={18}
+                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  onClick={() => handleDrawerOpen(id)}
+                />
+              )}
+              {accessList.includes("edit") && (
+                <MdEditSquare
+                  size={18}
+                  className="text-[#0090DD]"
+                  onClick={() => handleNewButton(id)}
+                />
+              )}
               {accessList.includes("delete") && (
                 <DeleteModal
                   open={open}
@@ -114,11 +141,11 @@ export default function Department() {
 
   return (
     <>
-      <PageTitle title="Contact" />
+      <PageTitle title="Department" />
       <PageHeader
-        hasAddButton={false}
-        newButtonText="Add New Blog"
-        handleNewButton={() => {}}
+        hasAddButton={true}
+        newButtonText="Add New Department"
+        handleNewButton={() => handleNewButton(null)}
         handleReloadButton={handleReload}
         hasSubText={false}
       />

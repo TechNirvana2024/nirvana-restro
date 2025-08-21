@@ -1,26 +1,24 @@
 import Input from "@/components/Input";
-import { ProductCategorySchema } from "./schema";
+import { TableSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import Button from "@/components/Button";
 import { z } from "zod";
 import useTranslation from "@/locale/useTranslation";
-import { PRODUCT_CATEGORY_LIST_ROUTE } from "@/routes/routeNames";
-import MediaComponent from "@/components/MediaComponent";
-import { ImageInputUI } from "@/components/ImageComponent";
-import { useEffect } from "react";
+import { TABLE_LIST_ROUTE } from "@/routes/routeNames";
+import { useEffect, useMemo } from "react";
 import {
-  useCreateProductCategoryMutation,
-  useGetProductCategoryByIdQuery,
-  useUpdateProductCategoryByIdMutation,
-} from "@/redux/services/productCategory";
+  useCreateApiMutation,
+  useGetApiQuery,
+  useUpdateApiMutation,
+} from "@/redux/services/crudApi";
+import { TABLE_URL, FLOOR_URL } from "@/constants/apiUrlConstants";
 import PageTitle from "@/components/PageTitle";
-import { useSingleImageHandler } from "@/hooks/useImageHandler";
-import TextArea from "@/components/TextArea";
+import Select from "@/components/Select";
 
-type ProductCategoryFormType = z.infer<typeof ProductCategorySchema>;
+type TableFormType = z.infer<typeof TableSchema>;
 
 interface Props {
   isComponent?: boolean;
@@ -34,59 +32,77 @@ export default function AddEditTable({
   const translate = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const isEditMode = !!id;
+
   const {
     register,
-    getValues,
-    setValue,
+    control,
     handleSubmit,
     setError,
     reset,
-    formState: { errors },
-  } = useForm<ProductCategoryFormType>({
-    resolver: zodResolver(ProductCategorySchema),
+    formState: { errors, isSubmitting },
+  } = useForm<TableFormType>({
+    resolver: zodResolver(TableSchema),
   });
 
-  const {
-    imageUrl,
-    handleConfirmImage,
-    isImageModelOpen,
-    setIsImageModelOpen,
-  } = useSingleImageHandler(setValue, getValues);
+  const [createTable, { isLoading: creatingTable }] = useCreateApiMutation();
+  const [updateTable, { isLoading: updatingTable }] = useUpdateApiMutation();
 
   const {
-    imageUrl: imageUrlSecondary,
-    handleConfirmImage: secondaryHandleConfirmImage,
-    isImageModelOpen: secondaryIsImageModelOpen,
-    setIsImageModelOpen: secondarySetIsImageModelOpen,
-  } = useSingleImageHandler(setValue, getValues, "imageUrlSecondary");
+    data: tableData,
+    isSuccess: success,
+    isLoading: loading,
+  } = useGetApiQuery(`${TABLE_URL}${id}`, {
+    skip: !isEditMode,
+  });
 
-  const { data: productCategory, isSuccess: success } =
-    useGetProductCategoryByIdQuery(id, {
-      skip: id === null || id === undefined,
-    });
-
-  const [createDepartment] = useCreateProductCategoryMutation();
-  const [updateDepartment] = useUpdateProductCategoryByIdMutation();
+  const { data: floorData } = useGetApiQuery(`${FLOOR_URL}list`);
 
   useEffect(() => {
-    reset(productCategory?.data);
-  }, [success]);
+    if (isEditMode && tableData && tableData?.data) {
+      reset(tableData?.data);
+    }
+  }, [tableData, isEditMode, reset]);
+
+  const floorOptions = useMemo(() => {
+    if (!floorData?.data) return [];
+    return floorData?.data?.data.map(
+      (item: { id: string; name: string; floorNo: string }) => ({
+        value: item.id,
+        label: `${item.floorNo} - ${item.name}`,
+      }),
+    );
+  }, [floorData]);
+
+  const typeOptions = [
+    { value: "regular", label: "Regular" },
+    { value: "vip", label: "VIP" },
+    { value: "indoor", label: "Indoor" },
+    { value: "outdoor", label: "Outdoor" },
+  ];
 
   const handleSuccess = () => {
     if (isComponent) {
       closeModal();
     } else {
-      navigate(PRODUCT_CATEGORY_LIST_ROUTE);
+      navigate(TABLE_LIST_ROUTE);
     }
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: TableFormType) => {
     const body = { ...data };
 
     try {
-      const response = id
-        ? await updateDepartment({ body, id }).unwrap()
-        : await createDepartment(body).unwrap();
+      const response = isEditMode
+        ? await updateTable({
+            url: `${TABLE_URL}${id}`,
+            body,
+          }).unwrap()
+        : await createTable({
+            url: `${TABLE_URL}`,
+            body,
+          }).unwrap();
+
       handleResponse({
         res: response,
         onSuccess: handleSuccess,
@@ -98,7 +114,9 @@ export default function AddEditTable({
 
   return (
     <>
-      {!isComponent && <PageTitle title="Add Product Category" />}
+      {!isComponent && (
+        <PageTitle title={isEditMode ? "Edit Table" : "Add Table"} isBack />
+      )}
       <form
         className={`grid grid-cols-1 gap-[2rem] mt-[1rem] ${
           isComponent ? "" : " form-container"
@@ -106,47 +124,66 @@ export default function AddEditTable({
         onSubmit={handleSubmit(onSubmit)}
       >
         <Input
+          label="Table No"
+          placeholder="Enter Table Number"
+          className="w-full md:w-1/2"
+          {...register("tableNo")}
+          error={errors.tableNo?.message}
+        />
+
+        <Input
           label="Name"
-          placeholder="Enter Product Category"
-          className="w-1/2"
+          placeholder="Enter Table Name (Optional)"
+          className="w-full md:w-1/2"
           {...register("name")}
           error={errors.name?.message}
         />
-        <div className="relative flex flex-col items-start w-[20rem] ">
-          <label className="input-label">
-            Image <span className="text-red-500">*</span>
-          </label>
-          <MediaComponent
-            title={<ImageInputUI image={imageUrl} type="large" />}
-            isMultiSelect={false}
-            handleConfirmImage={() => handleConfirmImage("imageUrl")}
-            open={isImageModelOpen}
-            setOpen={setIsImageModelOpen}
-          />
-        </div>
-        <div className="relative flex flex-col items-start w-[20rem] ">
-          <label className="input-label">
-            Secondary Image <span className="text-red-500">*</span>
-          </label>
-          <MediaComponent
-            title={<ImageInputUI image={imageUrlSecondary} type="large" />}
-            isMultiSelect={false}
-            handleConfirmImage={() =>
-              secondaryHandleConfirmImage("imageUrlSecondary")
-            }
-            open={secondaryIsImageModelOpen}
-            setOpen={secondarySetIsImageModelOpen}
-          />
-        </div>
-        <TextArea
-          label="Description"
-          className="w-1/2"
-          {...register("description")}
-          error={errors.description?.message}
+
+        <Controller
+          name="floorId"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              label="Floor"
+              options={floorOptions}
+              className="w-full md:w-1/2"
+              error={errors.floorId?.message}
+              required
+            />
+          )}
         />
+
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              label="Table Type"
+              options={typeOptions}
+              className="w-full md:w-1/2"
+              error={errors.type?.message}
+              required
+            />
+          )}
+        />
+
+        <Input
+          label="Capacity"
+          type="number"
+          placeholder="Enter Table Capacity"
+          className="w-full md:w-1/2"
+          {...register("capacity", { valueAsNumber: true })}
+          error={errors.capacity?.message}
+        />
+
         <div className="flex justify-start">
-          <Button type="submit" className="submit-button w-[5rem]">
-            {" "}
+          <Button
+            type="submit"
+            className="submit-button w-[5rem]"
+            disabled={isSubmitting || creatingTable || updatingTable}
+          >
             <div className="flex justify-center items-center gap-[0.5rem] text-white ">
               {translate("Submit")}
             </div>

@@ -1,14 +1,11 @@
 import { z } from "zod";
 
-export const ProductCategorySchema = z.object({
-  name: z.string().min(1, "Name is Required"),
-  imageUrl: z.union([
-    z.string().min(1, "Image Url is Required"),
-    z.array(z.string().min(1, "Each Image Url must be a valid string")),
-  ]),
-  imageUrlSecondary: z.union([
-    z.string().min(1, "Image Url is Required"),
-    z.array(z.string().min(1, "Each Image Url must be a valid string")),
-  ]),
-  description: z.string().optional(),
+export const TableSchema = z.object({
+  tableNo: z.string().min(1, "Table No is Required"),
+  name: z.string().optional(),
+  floorId: z.string().min(1, "Floor is Required"),
+  type: z.enum(["indoor", "outdoor", "vip", "regular"], {
+    required_error: "Table Type is Required",
+  }),
+  capacity: z.number().min(1, "Capacity must be at least 1"),
 });

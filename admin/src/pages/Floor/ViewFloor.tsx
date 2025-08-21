@@ -4,7 +4,7 @@ import { CONTACT_URL } from "@/constants/apiUrlConstants";
 import { useGetApiQuery } from "@/redux/services/crudApi";
 import { RiSeoLine } from "react-icons/ri";
 
-export default function ViewContact({ id }: { id: number | null }) {
+export default function ViewFloor({ id }: { id: number | null }) {
   const {
     data: contactData,
     isSuccess: success,
