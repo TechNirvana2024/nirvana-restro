@@ -8,12 +8,9 @@ import {
 import {
   Users,
   ImageIcon,
-  SearchIcon,
   Mail,
   Settings,
   UserCheck,
-  MessageCircle,
-  Tag,
   MenuIcon,
 } from "lucide-react";
 
@@ -65,23 +62,17 @@ export const SideMenuList: SideListMenuType[] = [
   },
   {
     key: 4,
-    name: "Contact",
-    icon: <MessageCircle />,
-    path: "/admin/contact",
-  },
-  {
-    key: 5,
     name: "User Management",
     icon: <Users />,
     menu: [
       {
-        key: 5.1,
+        key: 4.1,
         name: "Users",
         path: "/admin/auth/list",
         icon: <MdOutlinePerson />,
       },
       {
-        key: 5.2,
+        key: 4.2,
         name: "Roles",
         path: "/admin/roles/list",
         icon: <MdOutlineFactCheck />,
@@ -89,30 +80,18 @@ export const SideMenuList: SideListMenuType[] = [
     ],
   },
   {
-    key: 6,
-    name: "Banner",
-    path: "/admin/banner/list",
-    icon: <Tag />,
-  },
-  {
-    key: 7,
-    name: "SEO",
-    icon: <SearchIcon />,
-    path: "/admin/seo/list",
-  },
-  {
-    key: 8,
+    key: 5,
     name: "Email",
     icon: <Mail />,
     menu: [
       {
-        key: 8.1,
+        key: 5.1,
         name: "Email Template",
         path: "/admin/email-template/list",
         icon: <MdOutlineMailOutline />,
       },
       {
-        key: 8.2,
+        key: 5.2,
         name: "Email SMTP",
         path: "/admin/smtp",
         icon: <MdOutlineMailOutline />,
@@ -120,12 +99,12 @@ export const SideMenuList: SideListMenuType[] = [
     ],
   },
   {
-    key: 9,
+    key: 6,
     name: "Settings",
     icon: <Settings />,
     menu: [
       {
-        key: 9.1,
+        key: 6.1,
         name: "Company Settings",
         path: "/admin/settings/list",
         icon: <MdDisplaySettings />,

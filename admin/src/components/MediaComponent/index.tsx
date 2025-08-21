@@ -430,7 +430,7 @@ export default function MediaComponent({
                 isOpen={openModel}
                 onClose={handleCloseModel}
               >
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} className="py-10">
                   <Input
                     label="Create Folder"
                     placeholder="Enter Folder Name"

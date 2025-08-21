@@ -22,10 +22,12 @@ import DateInput from "@/components/DateInput";
 import PageFilterSample from "@/components/PageFilterSample";
 import { buildQueryString } from "@/utils/generalHelper";
 import PageFilterWrapper from "@/components/PageFilterWrapper";
+import { useNavigate } from "react-router-dom";
 import {
   ORDER_STATUS_OPTIONS,
   PAYMENT_STATUS_OPTIONS,
 } from "@/constants/StaticDropdownConstants";
+import { ORDER_ADD_ROUTE } from "@/routes/routeNames";
 
 export default function Order() {
   const { query, handlePagination } = usePagination({ limit: 10, page: 1 });
@@ -38,6 +40,8 @@ export default function Order() {
     });
 
   const [queryString, setQueryString] = useState("");
+
+  const navigate = useNavigate();
 
   const handlePaymentChange = (value: string) => {
     setValue("paymentStatus", value);
@@ -151,6 +155,12 @@ export default function Order() {
   const handleViewOrder = (id: number) => {
     setOrderId(id);
     setOpen(true);
+  };
+
+  const handleNewButton = (id: number | null) => {
+    id === null
+      ? navigate(ORDER_ADD_ROUTE)
+      : navigate(`${ORDER_ADD_ROUTE}${id}`);
   };
 
   async function handleStatusUpdate(status: string, id: number) {
@@ -290,7 +300,12 @@ export default function Order() {
 
   return (
     <div>
-      <PageHeader hasAddButton={false} handleReloadButton={handleReload}>
+      <PageHeader
+        hasAddButton={true}
+        newButtonText={"Create Order"}
+        handleNewButton={() => handleNewButton(null)}
+        handleReloadButton={handleReload}
+      >
         {success && (
           <ExportToExcel
             title="Order Report"
