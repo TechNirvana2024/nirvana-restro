@@ -3,32 +3,29 @@ import Drawer from "@/components/Drawer";
 import PageHeader from "@/components/PageHeader";
 import PageTitle from "@/components/PageTitle";
 import Table from "@/components/Table";
-import { DEPARTMENT_URL } from "@/constants/apiUrlConstants";
+import { FLOOR_URL } from "@/constants/apiUrlConstants";
 import usePagination from "@/hooks/usePagination";
 import { useDeleteApiMutation, useGetApiQuery } from "@/redux/services/crudApi";
 import { checkAccess } from "@/utils/accessHelper";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { useState } from "react";
-import ViewContact from "./ViewContact";
+import { FaEye } from "react-icons/fa";
+import ViewFloor from "./ViewFloor";
 import Spinner from "@/components/Spinner";
-import { DEPARTMENT_ADD_ROUTE } from "@/routes/routeNames";
+import { FLOOR_ADD_ROUTE } from "@/routes/routeNames";
 import { useNavigate } from "react-router-dom";
 import { MdEditSquare } from "react-icons/md";
-import { FaEye } from "react-icons/fa";
 
-interface DepartmentResponseType {
+interface FloorResponseType {
   id: number;
+  floorNo: string;
   name: string;
   description: string;
-  slug: string;
-  isActive: string;
-  AvgPreparationTime: number;
-  displayOrder: number;
-  color: string;
+  isActive: boolean;
 }
 
-export default function Department() {
-  const accessList = checkAccess("Department");
+export default function Floor() {
+  const accessList = checkAccess("Floor");
 
   const { query, handlePagination } = usePagination({ page: 1, limit: 10 });
 
@@ -41,12 +38,12 @@ export default function Department() {
   const navigate = useNavigate();
 
   const {
-    data: allDepartment,
+    data: allFloor,
     isSuccess: success,
     isLoading: loading,
     refetch,
-  } = useGetApiQuery({ url: `${DEPARTMENT_URL}list`, ...query });
-  const [deleteBanner] = useDeleteApiMutation();
+  } = useGetApiQuery({ url: `${FLOOR_URL}list`, ...query });
+  const [deleteFloor] = useDeleteApiMutation();
 
   const handleReload = () => {
     refetch();
@@ -59,8 +56,8 @@ export default function Department() {
 
   const handleNewButton = (id: number | null) => {
     id === null
-      ? navigate(DEPARTMENT_ADD_ROUTE)
-      : navigate(`${DEPARTMENT_ADD_ROUTE}${id}`);
+      ? navigate(FLOOR_ADD_ROUTE)
+      : navigate(`${FLOOR_ADD_ROUTE}${id}`);
   };
 
   const handleDeleteTrigger = (id: number) => {
@@ -70,12 +67,12 @@ export default function Department() {
 
   const handleDelete = async () => {
     try {
-      const response = await deleteBanner(
-        `${DEPARTMENT_URL}${deleteId}`,
-      ).unwrap();
+      const response = await deleteFloor(`${FLOOR_URL}${deleteId}`).unwrap();
       handleResponse({
         res: response,
-        onSuccess: () => {},
+        onSuccess: () => {
+          refetch();
+        },
       });
     } catch (error) {
       handleError({ error });
@@ -85,53 +82,61 @@ export default function Department() {
   };
 
   const pagination = {
-    page: allDepartment?.data?.page,
-    limit: allDepartment?.data?.limit,
-    total: allDepartment?.data?.total,
-    totalPages: allDepartment?.data?.totalPages,
+    page: allFloor?.data?.page,
+    limit: allFloor?.data?.limit,
+    total: allFloor?.data?.total,
+    totalPages: allFloor?.data?.totalPages,
   };
 
   const tableHeaders = [
+    "Floor No",
     "Name",
-    "Average Preparation Time",
+    "Status",
     accessList.includes("view") || accessList.includes("edit") || "Edit",
     accessList.includes("delete") && "Actions",
-  ];
+  ].filter(Boolean);
 
   const tableData =
-    success && allDepartment?.data?.data
-      ? allDepartment?.data?.data.map(
-          ({ id, name, AvgPreparationTime }: DepartmentResponseType) => [
-            name,
-            AvgPreparationTime,
-            <div
-              key={id}
-              className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
-            >
-              {accessList.includes("view") && (
+    success && allFloor?.data?.data
+      ? allFloor?.data?.data.map(
+          ({ id, floorNo, name, isActive }: FloorResponseType) =>
+            [
+              floorNo,
+              name,
+              <span
+                key={`status-${id}`}
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  isActive
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {isActive ? "Active" : "Inactive"}
+              </span>,
+              accessList.includes("view") && (
                 <FaEye
                   size={18}
                   className="text-[#0090DD] cursor-pointer mx-auto"
                   onClick={() => handleDrawerOpen(id)}
                 />
-              )}
-              {accessList.includes("edit") && (
+              ),
+              accessList.includes("edit") && (
                 <MdEditSquare
+                  key={`edit-${id}`}
                   size={18}
-                  className="text-[#0090DD]"
+                  className="text-[#0090DD] cursor-pointer mx-auto"
                   onClick={() => handleNewButton(id)}
                 />
-              )}
-              {accessList.includes("delete") && (
+              ),
+              accessList.includes("delete") && (
                 <DeleteModal
                   open={open}
                   setOpen={setOpen}
                   handleDeleteTrigger={() => handleDeleteTrigger(id)}
                   handleConfirmDelete={handleDelete}
                 />
-              )}
-            </div>,
-          ],
+              ),
+            ].filter(Boolean),
         )
       : [];
 
@@ -141,10 +146,10 @@ export default function Department() {
 
   return (
     <>
-      <PageTitle title="Department" />
+      <PageTitle title="Floor Management" />
       <PageHeader
         hasAddButton={true}
-        newButtonText="Add New Department"
+        newButtonText="Add New Floor"
         handleNewButton={() => handleNewButton(null)}
         handleReloadButton={handleReload}
         hasSubText={false}
@@ -165,7 +170,7 @@ export default function Department() {
         setIsOpen={setOpenDrawer}
         width="w-full lg:w-[30%]"
       >
-        <ViewContact id={drawerId} />
+        <ViewFloor id={drawerId} />
       </Drawer>
     </>
   );

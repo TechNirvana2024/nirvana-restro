@@ -1,8 +1,22 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
 .popup-container {
   background: #fff;
   border-radius: 8px;
   width: 90%;
-  max-width: 500px;
+  max-width: 800px;
+  max-height: 90vh;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: fadeIn 0.3s;
@@ -30,6 +44,8 @@
 
 .popup-content {
   padding: 16px;
+  max-height: calc(90vh - 80px);
+  overflow-y: auto;
 }
 
 @keyframes fadeIn {

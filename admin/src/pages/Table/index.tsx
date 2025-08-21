@@ -3,32 +3,33 @@ import Drawer from "@/components/Drawer";
 import PageHeader from "@/components/PageHeader";
 import PageTitle from "@/components/PageTitle";
 import Table from "@/components/Table";
-import { DEPARTMENT_URL } from "@/constants/apiUrlConstants";
+import { TABLE_URL } from "@/constants/apiUrlConstants";
 import usePagination from "@/hooks/usePagination";
 import { useDeleteApiMutation, useGetApiQuery } from "@/redux/services/crudApi";
 import { checkAccess } from "@/utils/accessHelper";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { useState } from "react";
-import ViewContact from "./ViewContact";
+import { FaEye } from "react-icons/fa";
+import ViewTable from "./ViewTable";
 import Spinner from "@/components/Spinner";
-import { DEPARTMENT_ADD_ROUTE } from "@/routes/routeNames";
+import { TABLE_ADD_ROUTE } from "@/routes/routeNames";
 import { useNavigate } from "react-router-dom";
 import { MdEditSquare } from "react-icons/md";
-import { FaEye } from "react-icons/fa";
 
-interface DepartmentResponseType {
+interface TableResponseType {
   id: number;
+  tableNo: string;
   name: string;
-  description: string;
-  slug: string;
-  isActive: string;
-  AvgPreparationTime: number;
-  displayOrder: number;
-  color: string;
+  type: string;
+  capacity: number;
+  status: string;
+  floor: {
+    name: string;
+  };
 }
 
-export default function Department() {
-  const accessList = checkAccess("Department");
+export default function OrderTable() {
+  const accessList = checkAccess("Table");
 
   const { query, handlePagination } = usePagination({ page: 1, limit: 10 });
 
@@ -41,12 +42,12 @@ export default function Department() {
   const navigate = useNavigate();
 
   const {
-    data: allDepartment,
+    data: allTable,
     isSuccess: success,
     isLoading: loading,
     refetch,
-  } = useGetApiQuery({ url: `${DEPARTMENT_URL}list`, ...query });
-  const [deleteBanner] = useDeleteApiMutation();
+  } = useGetApiQuery({ url: `${TABLE_URL}list`, ...query });
+  const [deleteTable] = useDeleteApiMutation();
 
   const handleReload = () => {
     refetch();
@@ -59,8 +60,8 @@ export default function Department() {
 
   const handleNewButton = (id: number | null) => {
     id === null
-      ? navigate(DEPARTMENT_ADD_ROUTE)
-      : navigate(`${DEPARTMENT_ADD_ROUTE}${id}`);
+      ? navigate(TABLE_ADD_ROUTE)
+      : navigate(`${TABLE_ADD_ROUTE}${id}`);
   };
 
   const handleDeleteTrigger = (id: number) => {
@@ -70,12 +71,12 @@ export default function Department() {
 
   const handleDelete = async () => {
     try {
-      const response = await deleteBanner(
-        `${DEPARTMENT_URL}${deleteId}`,
-      ).unwrap();
+      const response = await deleteTable(`${TABLE_URL}${deleteId}`).unwrap();
       handleResponse({
         res: response,
-        onSuccess: () => {},
+        onSuccess: () => {
+          refetch();
+        },
       });
     } catch (error) {
       handleError({ error });
@@ -85,53 +86,74 @@ export default function Department() {
   };
 
   const pagination = {
-    page: allDepartment?.data?.page,
-    limit: allDepartment?.data?.limit,
-    total: allDepartment?.data?.total,
-    totalPages: allDepartment?.data?.totalPages,
+    page: allTable?.data?.page,
+    limit: allTable?.data?.limit,
+    total: allTable?.data?.total,
+    totalPages: allTable?.data?.totalPages,
   };
 
   const tableHeaders = [
-    "Name",
-    "Average Preparation Time",
+    "Table No",
+    "Floor",
+    "Status",
     accessList.includes("view") || accessList.includes("edit") || "Edit",
     accessList.includes("delete") && "Actions",
-  ];
+  ].filter(Boolean);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "available":
+        return "bg-green-100 text-green-800";
+      case "occupied":
+        return "bg-orange-100 text-orange-800";
+      case "reserved":
+        return "bg-gray-100 text-gray-800";
+      case "maintenance":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const tableData =
-    success && allDepartment?.data?.data
-      ? allDepartment?.data?.data.map(
-          ({ id, name, AvgPreparationTime }: DepartmentResponseType) => [
-            name,
-            AvgPreparationTime,
-            <div
-              key={id}
-              className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
-            >
-              {accessList.includes("view") && (
+    success && allTable?.data?.data
+      ? allTable?.data?.data.map(
+          ({ id, tableNo, status, floor }: TableResponseType) =>
+            [
+              tableNo,
+              floor?.name || "-",
+              <span
+                key={`status-${id}`}
+                className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </span>,
+              accessList.includes("view") && (
                 <FaEye
+                  key={`view-${id}`}
                   size={18}
                   className="text-[#0090DD] cursor-pointer mx-auto"
                   onClick={() => handleDrawerOpen(id)}
                 />
-              )}
-              {accessList.includes("edit") && (
+              ),
+              accessList.includes("edit") && (
                 <MdEditSquare
+                  key={`edit-${id}`}
                   size={18}
-                  className="text-[#0090DD]"
+                  className="text-[#0090DD] cursor-pointer mx-auto"
                   onClick={() => handleNewButton(id)}
                 />
-              )}
-              {accessList.includes("delete") && (
+              ),
+              accessList.includes("delete") && (
                 <DeleteModal
+                  key={`delete-${id}`}
                   open={open}
                   setOpen={setOpen}
                   handleDeleteTrigger={() => handleDeleteTrigger(id)}
                   handleConfirmDelete={handleDelete}
                 />
-              )}
-            </div>,
-          ],
+              ),
+            ].filter(Boolean),
         )
       : [];
 
@@ -141,10 +163,10 @@ export default function Department() {
 
   return (
     <>
-      <PageTitle title="Department" />
+      <PageTitle title="Table Management" />
       <PageHeader
-        hasAddButton={true}
-        newButtonText="Add New Department"
+        hasAddButton={accessList.includes("add")}
+        newButtonText="Add New Table"
         handleNewButton={() => handleNewButton(null)}
         handleReloadButton={handleReload}
         hasSubText={false}
@@ -165,7 +187,7 @@ export default function Department() {
         setIsOpen={setOpenDrawer}
         width="w-full lg:w-[30%]"
       >
-        <ViewContact id={drawerId} />
+        <ViewTable id={drawerId} />
       </Drawer>
     </>
   );

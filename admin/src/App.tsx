@@ -13,7 +13,6 @@ import { useEffect, useRef, useState } from "react";
 import Toast from "./components/Toast";
 import { useDispatch } from "react-redux";
 import { setAuthData } from "./redux/feature/authSlice";
-import useTranslation from "./locale/useTranslation";
 import Logo from "./assets/logo.svg";
 import { jwtDecode } from "jwt-decode";
 import { clearProfile } from "./redux/feature/profileSlice";
@@ -34,7 +33,6 @@ interface DecodedToken {
 }
 
 export default function App() {
-  const translate = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [captchaToken, setCaptchaToken] = useState<string>();
@@ -124,7 +122,6 @@ export default function App() {
           />
 
           <Button type="submit" className="submit-button">
-            {" "}
             <div className="flex justify-center items-center gap-[0.5rem] text-white">
               Login <RiLoginBoxLine />
             </div>
