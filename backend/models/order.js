@@ -59,7 +59,7 @@ module.exports = (sequelize) => {
         defaultValue: "cash",
       },
       orderType: {
-        type: DataTypes.ENUM("dineIn", "takeaway", "delivery"),
+        type: DataTypes.ENUM("dineIn", "takeaway"),
         allowNull: false,
       },
       isGuestOrder: {
@@ -92,23 +92,11 @@ module.exports = (sequelize) => {
        type:DataTypes.DATE,
         allowNull:true,
       },
-      customerName: {
-        type: DataTypes.STRING,
+      customerId: {
+        type: DataTypes.INTEGER,
         allowNull: true,
-      },
-      customerPhone: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      customerEmail: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      deliveryAddress: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
     },
+  },
     {
       sequelize,
       modelName: "Order",

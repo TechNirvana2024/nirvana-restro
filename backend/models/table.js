@@ -41,6 +41,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      // name can be remove it is not needed
       type: {
         type: DataTypes.ENUM("indoor", "outdoor", "vip", "regular"),
         allowNull: false,
@@ -56,15 +57,10 @@ module.exports = (sequelize) => {
         type: DataTypes.ENUM(
           "available",
           "occupied",
-          "reserved",
           "maintenance",
         ),
         allowNull: false,
         defaultValue: "available",
-      },
-      currentSessionId: {
-        type: DataTypes.UUID,
-        allowNull: true, 
       },
       sessionStartTime: {
         type: DataTypes.DATE,
@@ -79,7 +75,6 @@ module.exports = (sequelize) => {
       indexes: [
         { fields: ["floorId"] },
         { fields: ["status"] },
-        { fields: ["currentSessionId"] },
         { fields: ["tableNo", "floorId"], unique: true },
       ],
     },
