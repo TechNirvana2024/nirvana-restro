@@ -193,7 +193,7 @@ const updateOrderItems = async (req) => {
 };
 
 const getTableActiveOrders = async (req) => {
-  const { tableId } = req.params;
+  const { id:tableId } = req.params;
 
   try {
     const table = await tableModel.findByPk(tableId);
@@ -214,7 +214,7 @@ const getTableActiveOrders = async (req) => {
     const orders = await orderModel.findAll({
       where: {
         tableId: tableId,
-        sessionId: table.currentSessionId,
+        sessionId: table.sessionId,
         status: { [Op.notIn]: ["completed", "cancelled"] },
       },
       include: [
@@ -349,7 +349,6 @@ const checkoutOrder = async (req) => {
     throw error;
   }
 };
-
 
 const getOrderById = async (req) => {
   const { id } = req.params;
@@ -544,10 +543,8 @@ const updateOrderStatus = async (req) => {
 // this is for waiters to mark order items as served
 const bulkServeOrderItems = async (req) => {
   const { orderItemIds } = req.body; // array of orderItem ids
-
+  
   try {
-
-
     // fetch order items
     const orderItems = await orderItemModel.findAll({
       where: { id: orderItemIds ,status: "ready" },
@@ -634,6 +631,44 @@ const updateOrderItemsStatus = async (req) => {
 };
 
 
+// for waiter , department and all 
+const getOrderItems = async (req) => {
+  try {
+    let { limit, page, status } = req.query;
+    const filters = {};
+    const include = [];
+
+    if (status) {
+      filters.status = {
+        [Op.like]: `%${status}%`,
+      };
+    }
+
+    const result = await paginate(orderItemModel, {
+      limit,
+      page,
+      filters,
+      include,
+    });
+
+    if (!result) {
+      return {
+        status: 500,
+        success: false,
+        message: `Order Items List Failed`,
+      };
+    }
+    return {
+      status: 200,
+      success: true,
+      message: `Order Items successfully`,
+      data: result,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   getTableActiveOrders,
   getOrderById,
@@ -647,6 +682,8 @@ module.exports = {
 
   // cashier services
   checkoutOrder,
+
+  getOrderItems,
 
   //department services
   updateOrderItemsStatus,

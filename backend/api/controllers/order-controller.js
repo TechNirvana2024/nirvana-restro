@@ -91,6 +91,23 @@ const listOrders = async (req, res, next) => {
     next(err);
   }
 };
+const listOrderItems = async (req, res, next) => {
+  try {
+    const result = await orderService.getOrderItems(req);
+    return responseHelper.sendResponse(
+      res,
+      result.status,
+      result.success,
+      result.data,
+      result.errors,
+      result.message,
+      result.token,
+    );
+  } catch (err) {
+    logger.error(err);
+    next(err);
+  }
+};
 
 const updateOrderStatus = async (req, res, next) => {
   try {
@@ -170,8 +187,10 @@ module.exports = {
   getTableActiveOrders,
   getOrderById,
   listOrders,
+  listOrderItems,
   updateOrderStatus,
   bulkServeOrderItems,
   updateOrderItemsStatus,
   checkoutOrder,
+
 };
