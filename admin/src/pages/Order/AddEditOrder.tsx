@@ -14,8 +14,8 @@ import Model from "@/components/Model";
 import { FaPlus, FaTrash, FaSearch } from "react-icons/fa";
 import { MdShoppingCart } from "react-icons/md";
 
-import { dummyTables } from "../../tempDatas/table";
-import { dummyProducts } from "../../tempDatas/product";
+import { useGetApiQuery, useCreateApiMutation } from "@/redux/services/crudApi";
+import { TABLE_URL } from "@/constants/apiUrlConstants";
 
 type OrderFormType = z.infer<typeof OrderSchema>;
 
@@ -71,43 +71,20 @@ export default function AddEditOrder({
     setValue("orderItems", orderItems);
   }, [orderItems, setValue]);
 
-  const tableData = useMemo(
-    () => ({
-      data: {
-        data: dummyTables.filter(
-          (table) =>
-            table.status === "available" || table.status === "occupied",
-        ),
-      },
-    }),
-    [],
-  );
+  // Fetch tables from backend (generic)
+  const { data: tableData } = useGetApiQuery({ url: `${TABLE_URL}list` });
 
-  const productData = useMemo(
-    () => ({
-      data: {
-        data: dummyProducts.filter(
-          (product) =>
-            product.isActive &&
-            (productSearchTerm === "" ||
-              product.name
-                .toLowerCase()
-                .includes(productSearchTerm.toLowerCase()) ||
-              product.description
-                .toLowerCase()
-                .includes(productSearchTerm.toLowerCase())),
-        ),
-      },
-    }),
-    [productSearchTerm],
-  );
+  // Fetch products from backend (generic)
+  const { data: productData, isLoading: isProductLoading } = useGetApiQuery({
+    url: `/product?search=${encodeURIComponent(productSearchTerm)}`,
+  });
 
   const tableOptions = useMemo(() => {
-    if (!tableData?.data?.data) return [];
-    return tableData.data.data.map(
+    if (!tableData?.data) return [];
+    return tableData.data.data?.map(
       (table: { id: string; tableNo: string }) => ({
         value: table.id,
-        label: `Table ${table.tableNo}`,
+        label: `${table.tableNo}`,
       }),
     );
   }, [tableData]);
@@ -121,11 +98,9 @@ export default function AddEditOrder({
     const existingItem = orderItems.find(
       (item) => item.productId === product.id,
     );
-
     if (existingItem) {
       updateOrderItemQuantity(existingItem.id, existingItem.quantity + 1);
     } else {
-      // Add new item
       const newItem: OrderItem = {
         id: `item_${Date.now()}_${Math.random()}`,
         productId: product.id,
@@ -135,10 +110,8 @@ export default function AddEditOrder({
         subtotal: product.price,
         specialInstructions: "",
       };
-
       setOrderItems((prev) => [...prev, newItem]);
     }
-
     setIsProductModalOpen(false);
   };
 
@@ -173,12 +146,28 @@ export default function AddEditOrder({
     }
   };
 
+  // Create order mutation (generic)
+  const [createApi, { isLoading: isOrderSubmitting }] = useCreateApiMutation();
+
   const onSubmit = async (data: OrderFormType) => {
     if (orderItems.length === 0) {
       setError("orderItems", {
         message: "At least one order item is required",
       });
       return;
+    }
+    try {
+      const payload = {
+        ...data,
+        orderItems: orderItems.map(({ id, ...rest }) => rest), // Remove local id
+        totalAmount,
+      };
+      await createApi({ url: "/order", body: payload }).unwrap();
+      handleSuccess();
+    } catch (error: any) {
+      setError("root", {
+        message: error?.data?.message || "Failed to create order",
+      });
     }
   };
 
@@ -204,6 +193,7 @@ export default function AddEditOrder({
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Order Type */}
               <Controller
                 name="orderType"
                 control={control}
@@ -223,9 +213,9 @@ export default function AddEditOrder({
                 )}
               />
 
+              {/* Table (for dineIn) */}
               {watchedOrderType === "dineIn" && (
                 <Controller
-                  defaultValue={id || ""}
                   name="tableId"
                   control={control}
                   render={({ field }) => (
@@ -240,42 +230,9 @@ export default function AddEditOrder({
                   )}
                 />
               )}
-
-              {/* <Input
-                label="Customer Name"
-                placeholder="Enter customer name"
-                className="w-full"
-                {...register("customerName")}
-                error={errors.customerName?.message}
-              />
-
-              <Input
-                label="Customer Phone"
-                placeholder="Enter customer phone"
-                className="w-full"
-                {...register("customerPhone")}
-                error={errors.customerPhone?.message}
-              />
-
-              <Input
-                label="Customer Email"
-                type="email"
-                placeholder="Enter customer email"
-                className="w-full"
-                {...register("customerEmail")}
-                error={errors.customerEmail?.message}
-              />
-
-              <Input
-                label="Estimated Time (minutes)"
-                type="number"
-                placeholder="Enter estimated time"
-                className="w-full"
-                {...register("estimatedTime", { valueAsNumber: true })}
-                error={errors.estimatedTime?.message}
-              /> */}
             </div>
 
+            {/* Delivery Address (for delivery) */}
             {watchedOrderType === "delivery" && (
               <div className="mt-6">
                 <TextArea
@@ -284,10 +241,12 @@ export default function AddEditOrder({
                   className="w-full"
                   {...register("deliveryAddress")}
                   error={errors.deliveryAddress?.message}
+                  required
                 />
               </div>
             )}
 
+            {/* Order Note */}
             <div className="mt-6">
               <TextArea
                 label="Order Note"
@@ -446,9 +405,14 @@ export default function AddEditOrder({
             </div>
           </div>
 
-          {productData?.data?.data?.length > 0 ? (
+          {isProductLoading ? (
+            <div className="text-center py-12">
+              <MdShoppingCart className="mx-auto h-16 w-16 text-gray-300 mb-4" />
+              <p className="text-gray-500 text-lg mb-2">Loading products...</p>
+            </div>
+          ) : productData?.data?.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-              {productData.data.data.map(
+              {productData.data.map(
                 (product: {
                   id: string;
                   name: string;
@@ -490,7 +454,7 @@ export default function AddEditOrder({
               <p className="text-gray-500 text-lg mb-2">
                 {productSearchTerm
                   ? "No products found"
-                  : "Loading products..."}
+                  : "No products available"}
               </p>
               {productSearchTerm && (
                 <p className="text-gray-400 text-sm">

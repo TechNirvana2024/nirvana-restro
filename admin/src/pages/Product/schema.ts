@@ -5,7 +5,7 @@ export const ProductSchema = z.object({
   alias: z.array(z.string().optional()),
   description: z.string().min(1, "Description is Required"),
   quantity: z.number({ message: "price must be a number" }).int().positive(),
-  // order: z.number({ message: "price must be a number" }).int().positive(),
+  departmentId: z.coerce.number().min(1, "Department is Required"),
   price: z.union([
     z.string(),
     z.number({ message: "price must be a number" }).positive(),

@@ -10,6 +10,7 @@ const productPostValidation = async (req, res, next) => {
   let joiModel = joi.object({
     productCategoryId: joi.number().integer().positive().required(),
     name: joi.string().trim().min(1).required(),
+    departmentId: joi.number().integer().positive().required(),
     alias: joi
       .alternatives()
       .try(joi.array().items(joi.string()), joi.object()),
@@ -39,6 +40,7 @@ const productPutValidation = async (req, res, next) => {
   let joiModel = joi.object({
     productCategoryId: joi.number().integer().positive().optional(),
     name: joi.string().trim().min(1).optional(),
+    departmentId: joi.number().integer().positive().optional(),
     alias: joi
       .alternatives()
       .try(joi.array().items(joi.string()), joi.object()),

@@ -19,43 +19,10 @@ const createOrder = async (req, res, next) => {
     next(err);
   }
 };
-const incrementCartItem = async (req, res, next) => {
+
+const updateOrderItems = async (req, res, next) => {
   try {
-    const result = await orderService.incrementCartItem(req);
-    return responseHelper.sendResponse(
-      res,
-      result.status,
-      result.success,
-      result.data,
-      result.errors,
-      result.message,
-      result.token,
-    );
-  } catch (err) {
-    logger.error(err);
-    next(err);
-  }
-};
-const decrementCartItem = async (req, res, next) => {
-  try {
-    const result = await orderService.decrementCartItem(req);
-    return responseHelper.sendResponse(
-      res,
-      result.status,
-      result.success,
-      result.data,
-      result.errors,
-      result.message,
-      result.token,
-    );
-  } catch (err) {
-    logger.error(err);
-    next(err);
-  }
-};
-const createCheckoutSession = async (req, res, next) => {
-  try {
-    const result = await orderService.createCheckoutSession(req);
+    const result = await orderService.updateOrderItems(req);
     return responseHelper.sendResponse(
       res,
       result.status,
@@ -71,60 +38,9 @@ const createCheckoutSession = async (req, res, next) => {
   }
 };
 
-const paymentSuccess = async (req, res, next) => {
+const getTableActiveOrders = async (req, res, next) => {
   try {
-    const result = await orderService.paymentSuccess(req);
-    return responseHelper.sendResponse(
-      res,
-      result.status,
-      result.success,
-      result.data,
-      result.errors,
-      result.message,
-      result.token,
-    );
-  } catch (err) {
-    logger.error(err);
-    next(err);
-  }
-};
-const paymentFailed = async (req, res, next) => {
-  try {
-    const result = await orderService.paymentFailed(req);
-    return responseHelper.sendResponse(
-      res,
-      result.status,
-      result.success,
-      result.data,
-      result.errors,
-      result.message,
-      result.token,
-    );
-  } catch (err) {
-    logger.error(err);
-    next(err);
-  }
-};
-const deleteCarts = async (req, res, next) => {
-  try {
-    const result = await orderService.removeCartItems(req);
-    return responseHelper.sendResponse(
-      res,
-      result.status,
-      result.success,
-      result.data,
-      result.errors,
-      result.message,
-      result.token,
-    );
-  } catch (err) {
-    logger.error(err);
-    next(err);
-  }
-};
-const getCarts = async (req, res, next) => {
-  try {
-    const result = await orderService.viewCart(req);
+    const result = await orderService.getTableActiveOrders(req);
     return responseHelper.sendResponse(
       res,
       result.status,
@@ -140,10 +56,9 @@ const getCarts = async (req, res, next) => {
   }
 };
 
-// admin
-const getById = async (req, res, next) => {
+const getOrderById = async (req, res, next) => {
   try {
-    const result = await orderService.getById(req);
+    const result = await orderService.getOrderById(req);
     return responseHelper.sendResponse(
       res,
       result.status,
@@ -158,9 +73,10 @@ const getById = async (req, res, next) => {
     next(err);
   }
 };
-const list = async (req, res, next) => {
+
+const listOrders = async (req, res, next) => {
   try {
-    const result = await orderService.list(req);
+    const result = await orderService.listOrders(req);
     return responseHelper.sendResponse(
       res,
       result.status,
@@ -175,9 +91,64 @@ const list = async (req, res, next) => {
     next(err);
   }
 };
-const updateStatus = async (req, res, next) => {
+
+const updateOrderStatus = async (req, res, next) => {
   try {
-    const result = await orderService.updateStatus(req);
+    const result = await orderService.updateOrderStatus(req);
+    return responseHelper.sendResponse(
+      res,
+      result.status,
+      result.success,
+      result.data,
+      result.errors,
+      result.message,
+      result.token,
+    );
+  } catch (err) {
+    logger.error(err);
+    next(err);
+  }
+};
+
+const bulkServeOrderItems = async (req, res, next) => {
+  try {
+    const result = await orderService.bulkServeOrderItems(req);
+    return responseHelper.sendResponse(
+      res,
+      result.status,
+      result.success,
+      result.data,
+      result.errors,
+      result.message,
+      result.token,
+    );
+  } catch (err) {
+    logger.error(err);
+    next(err);
+  }
+};
+
+const updateOrderItemsStatus = async (req, res, next) => {
+  try {
+    const result = await orderService.updateOrderItemsStatus(req);
+    return responseHelper.sendResponse(
+      res,
+      result.status,
+      result.success,
+      result.data,
+      result.errors,
+      result.message,
+      result.token,
+    );
+  } catch (err) {
+    logger.error(err);
+    next(err);
+  }
+};
+
+const checkoutOrder = async (req, res, next) => {
+  try {
+    const result = await orderService.checkoutOrder(req);
     return responseHelper.sendResponse(
       res,
       result.status,
@@ -194,17 +165,13 @@ const updateStatus = async (req, res, next) => {
 };
 
 module.exports = {
-  incrementCartItem,
-  decrementCartItem,
   createOrder,
-  paymentSuccess,
-  getCarts,
-  deleteCarts,
-  paymentFailed,
-  createCheckoutSession,
-
-  //admin
-  getById,
-  list,
-  updateStatus,
+  updateOrderItems,
+  getTableActiveOrders,
+  getOrderById,
+  listOrders,
+  updateOrderStatus,
+  bulkServeOrderItems,
+  updateOrderItemsStatus,
+  checkoutOrder,
 };

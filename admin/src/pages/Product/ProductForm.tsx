@@ -21,11 +21,13 @@ import {
   useUpdateProductByIdMutation,
 } from "@/redux/services/product";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useImageHandler from "@/hooks/useImageHandler";
 import { useListAllProductCategoryQuery } from "@/redux/services/productCategory";
 import Drawer from "@/components/Drawer";
 import ListCategoryDetails from "./ListCategoryDetails";
+import { DEPARTMENT_URL } from "@/constants/apiUrlConstants";
+import { useGetApiQuery } from "@/redux/services/crudApi";
 
 type ProductFormType = z.infer<typeof ProductSchema>;
 
@@ -82,6 +84,21 @@ export default function ProductForm() {
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductByIdMutation();
 
+  const { data: departmentData } = useGetApiQuery({
+    url: `${DEPARTMENT_URL}list`,
+  });
+
+  const departmentOptions = useMemo(() => {
+    if (!departmentData?.data) return [];
+    return departmentData?.data?.data.map(
+      (item: { id: number; name: string }) => ({
+        value: item.id,
+        label: `${item.name}`,
+      }),
+    );
+  }, [departmentData]);
+
+  console.log(departmentOptions, "Department Options");
   useEffect(() => {
     if (id !== null) {
       if (product?.data) {
@@ -195,6 +212,22 @@ export default function ProductForm() {
             </div>
           )}
         />
+
+        <Controller
+          name="departmentId"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              label="Department"
+              options={departmentOptions}
+              className="w-full md:w-1/2"
+              error={errors.departmentId?.message}
+              required
+            />
+          )}
+        />
+
         <div className="flex flex-col items-start w-[20rem] ">
           <label className="input-label text-start mb-[2px]">
             Image <span className="text-red-500">*</span>
