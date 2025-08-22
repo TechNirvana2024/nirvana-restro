@@ -115,6 +115,13 @@ export default function Floor() {
               key={id}
               className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
             >
+              {accessList.includes("view") && (
+                <FaEye
+                  size={18}
+                  className="text-[#0090DD] cursor-pointer"
+                  onClick={() => handleDrawerOpen(id)}
+                />
+              )}
               {accessList.includes("edit") && (
                 <MdEditSquare
                   size={18}

@@ -24,6 +24,7 @@ interface TableResponseType {
   capacity: number;
   status: string;
   floor: {
+    floorNo: string;
     name: string;
   };
 }
@@ -96,8 +97,7 @@ export default function OrderTable() {
     "Table No",
     "Floor",
     "Status",
-    accessList.includes("view") || accessList.includes("edit") || "Edit",
-    accessList.includes("delete") && "Actions",
+    (accessList.includes("edit") || accessList.includes("delete")) && "Actions",
   ].filter(Boolean);
 
   const getStatusColor = (status: string) => {
@@ -118,42 +118,43 @@ export default function OrderTable() {
   const tableData =
     success && allTable?.data?.data
       ? allTable?.data?.data.map(
-          ({ id, tableNo, status, floor }: TableResponseType) =>
-            [
-              tableNo,
-              floor?.name || "-",
-              <span
-                key={`status-${id}`}
-                className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </span>,
-              accessList.includes("view") && (
+          ({ id, tableNo, status, floor }: TableResponseType) => [
+            tableNo,
+            floor.floorNo + "-" + floor?.name || "-",
+            <span
+              key={`status-${id}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </span>,
+            <div
+              key={id}
+              className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
+            >
+              {accessList.includes("view") && (
                 <FaEye
-                  key={`view-${id}`}
                   size={18}
-                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  className="text-[#0090DD] cursor-pointer"
                   onClick={() => handleDrawerOpen(id)}
                 />
-              ),
-              accessList.includes("edit") && (
+              )}
+              {accessList.includes("edit") && (
                 <MdEditSquare
-                  key={`edit-${id}`}
                   size={18}
-                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  className="text-[#0090DD]"
                   onClick={() => handleNewButton(id)}
                 />
-              ),
-              accessList.includes("delete") && (
+              )}
+              {accessList.includes("delete") && (
                 <DeleteModal
-                  key={`delete-${id}`}
                   open={open}
                   setOpen={setOpen}
                   handleDeleteTrigger={() => handleDeleteTrigger(id)}
                   handleConfirmDelete={handleDelete}
                 />
-              ),
-            ].filter(Boolean),
+              )}
+            </div>,
+          ],
         )
       : [];
 

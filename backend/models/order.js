@@ -20,11 +20,6 @@ module.exports = (sequelize) => {
         as: "table",
         onDelete: "SET NULL",
       });
-      Order.belongsTo(models.customerId, {
-        foreignKey: "customerId",
-        as: "customer",
-        onDelete: "SET NULL",
-      });
     }
   }
 
@@ -45,11 +40,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       status: {
-        type: DataTypes.ENUM(
-          "pending",
-          "completed",
-          "cancelled",
-        ),
+        type: DataTypes.ENUM("pending", "completed", "cancelled"),
         defaultValue: "pending",
       },
       paymentStatus: {
@@ -86,19 +77,19 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      orderStartTime:{
-        type:DataTypes.DATE,
-        allowNull:false,
+      orderStartTime: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
-      orderFinishTime:{
-       type:DataTypes.DATE,
-        allowNull:true,
+      orderFinishTime: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
       customerId: {
         type: DataTypes.INTEGER,
         allowNull: true,
+      },
     },
-  },
     {
       sequelize,
       modelName: "Order",

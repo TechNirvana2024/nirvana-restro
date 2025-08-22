@@ -52,9 +52,12 @@ export default function AddEditTable({
     data: tableData,
     isSuccess: success,
     isLoading: loading,
-  } = useGetApiQuery(`${TABLE_URL}${id}`, {
-    skip: !isEditMode,
-  });
+  } = useGetApiQuery(
+    { url: `${TABLE_URL}${id}` },
+    {
+      skip: !isEditMode,
+    },
+  );
 
   const { data: floorData } = useGetApiQuery({ url: `${FLOOR_URL}list` });
 
@@ -66,8 +69,9 @@ export default function AddEditTable({
 
   const floorOptions = useMemo(() => {
     if (!floorData?.data) return [];
+    console.log(floorData);
     return floorData?.data?.data.map(
-      (item: { id: string; name: string; floorNo: string }) => ({
+      (item: { id: number; name: string; floorNo: string }) => ({
         value: item.id,
         label: `${item.floorNo} - ${item.name}`,
       }),
@@ -77,8 +81,6 @@ export default function AddEditTable({
   const typeOptions = [
     { value: "regular", label: "Regular" },
     { value: "vip", label: "VIP" },
-    { value: "indoor", label: "Indoor" },
-    { value: "outdoor", label: "Outdoor" },
   ];
 
   const handleSuccess = () => {
@@ -129,14 +131,6 @@ export default function AddEditTable({
           className="w-full md:w-1/2"
           {...register("tableNo")}
           error={errors.tableNo?.message}
-        />
-
-        <Input
-          label="Name"
-          placeholder="Enter Table Name (Optional)"
-          className="w-full md:w-1/2"
-          {...register("name")}
-          error={errors.name?.message}
         />
 
         <Controller

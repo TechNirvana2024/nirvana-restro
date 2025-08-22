@@ -26,7 +26,7 @@ router.get("/list", authentication, authorization, paginationValidation, list);
 
 router.get("/:id", authentication, authorization, idValidation, getById);
 
-router.patch(
+router.put(
   "/:id",
   authentication,
   authorization,

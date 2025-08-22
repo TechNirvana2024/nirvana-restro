@@ -29,7 +29,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      sessionId:{
+      sessionId: {
         type: DataTypes.UUID,
         allowNull: true,
       },
@@ -37,11 +37,6 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      // name can be remove it is not needed
       type: {
         type: DataTypes.ENUM("indoor", "outdoor", "vip", "regular"),
         allowNull: false,
@@ -54,17 +49,13 @@ module.exports = (sequelize) => {
         validate: { min: 1 },
       },
       status: {
-        type: DataTypes.ENUM(
-          "available",
-          "occupied",
-          "maintenance",
-        ),
+        type: DataTypes.ENUM("available", "occupied", "maintenance"),
         allowNull: false,
         defaultValue: "available",
       },
       sessionStartTime: {
         type: DataTypes.DATE,
-        allowNull: true, 
+        allowNull: true,
       },
     },
     {

@@ -1,18 +1,18 @@
-const { tableModel,orderModel } = require("../../models");
+const { tableModel, orderModel, floorModel } = require("../../models");
 const { Op } = require("sequelize");
 const paginate = require("../../utils/paginate");
-const generateUUID  = require("../../utils/uuidGenerator");
+const generateUUID = require("../../utils/uuidGenerator");
 
 const create = async (req) => {
   try {
-    const isNameUsed= await tableModel.findOne({
+    const isNameUsed = await tableModel.findOne({
       where: {
         tableNo: req.body.tableNo,
-        floorId: req.body.floorId
-      }
-    })
+        floorId: req.body.floorId,
+      },
+    });
 
-    if(isNameUsed){
+    if (isNameUsed) {
       return {
         status: 400,
         success: false,
@@ -23,16 +23,15 @@ const create = async (req) => {
     const result = await tableModel.create(req.body);
     if (!result) {
       return {
-          status: 500,
-          success: false,
-          message: `Table create failed`,
+        status: 500,
+        success: false,
+        message: `Table create failed`,
       };
     }
     return {
-       status: 200,
-          success: false,
-          message: `Table create successfully`,
-      
+      status: 200,
+      success: true,
+      message: `Table create successfully`,
     };
   } catch (error) {
     throw error;
@@ -41,9 +40,9 @@ const create = async (req) => {
 
 const list = async (req) => {
   try {
-    let { limit, page, floorId,tableNo } = req.query;
+    let { limit, page, floorId, tableNo } = req.query;
     const filters = {};
-    const include = [];
+    const include = [{ model: floorModel, as: "floor" }];
 
     if (floorId) {
       filters.floorId = {
@@ -64,18 +63,17 @@ const list = async (req) => {
     });
 
     if (!result) {
-     return {
-          status: 500,
-          success: false,
-          message: `Table List Failed`,
+      return {
+        status: 500,
+        success: false,
+        message: `Table List Failed`,
       };
     }
     return {
-          
-          status: 200,
-          success: false,
-          message: `Table List successfully`,
-          data:result
+      status: 200,
+      success: true,
+      message: `Table List successfully`,
+      data: result,
     };
   } catch (error) {
     throw error;
@@ -84,25 +82,25 @@ const list = async (req) => {
 
 const getById = async (req) => {
   try {
-    const result = await tableModel.findByPk(+req.params.id,
-     { include:{
-        model:orderModel,
-        as: "orders"
-      }}
-    );
+    const result = await tableModel.findByPk(+req.params.id, {
+      include: {
+        model: orderModel,
+        as: "orders",
+      },
+    });
     if (!result) {
       return {
         status: 404,
-          success: false,
-          message: `Table Not Found`,
-          data:null
+        success: false,
+        message: `Table Not Found`,
+        data: null,
       };
     }
-    return {          
-          status: 200,
-          success: true,
-          message: `Table Get successfully`,
-          data:result
+    return {
+      status: 200,
+      success: true,
+      message: `Table Get successfully`,
+      data: result,
     };
   } catch (error) {
     throw error;
@@ -114,27 +112,27 @@ const deleteById = async (req) => {
     const result = await tableModel.findByPk(+req.params.id);
     if (!result) {
       return {
-       status: 404,
-          success: false,
-          message: `Table Not Found`,
-          data:null
+        status: 404,
+        success: false,
+        message: `Table Not Found`,
+        data: null,
       };
     }
 
     const deleted = await result.destroy();
     if (!deleted) {
       return {
-       status: 500,
-          success: false,
-          message: `Table delete failed`,
-          data:null
+        status: 500,
+        success: false,
+        message: `Table delete failed`,
+        data: null,
       };
     }
     return {
       status: 200,
-          success: false,
-          message: `Table delete successfully`,
-          data:null
+      success: true,
+      message: `Table delete successfully`,
+      data: null,
     };
   } catch (error) {
     throw error;
@@ -144,7 +142,7 @@ const deleteById = async (req) => {
 const updateTableStatus = async (req) => {
   try {
     const { id } = req.params;
-    const { status ,...otherUpdates} = req.body;
+    const { status, ...otherUpdates } = req.body;
 
     const table = await tableModel.findByPk(id);
     if (!table) {
@@ -158,9 +156,7 @@ const updateTableStatus = async (req) => {
     if (status === "available" || status === "maintenance") {
       table.currentSessionId = null;
       table.sessionStartTime = null;
-    }
-
-    else if (status === "occupied") {
+    } else if (status === "occupied") {
       if (!table.currentSessionId) {
         table.currentSessionId = generateUUID.generateUUID();
         table.sessionStartTime = new Date();
@@ -189,8 +185,6 @@ const updateTableStatus = async (req) => {
     throw error;
   }
 };
-
-
 
 module.exports = {
   create,
