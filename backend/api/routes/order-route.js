@@ -10,13 +10,17 @@ const {
   bulkServeOrderItems,
   updateOrderItemsStatus,
   checkoutOrder,
+  listOrderItems,
 } = require("../controllers/order-controller");
 
 const {
   authentication,
   authorization,
 } = require("../../middlewares/auth-middleware");
-
+const {
+  idValidation,
+  paginationValidation,
+} = require("../../validations/common-validation");
 const {
   createOrderValidation,
   updateOrderItemsValidation,
@@ -29,20 +33,20 @@ const {
 const authenticateUser = require("../../middlewares/customer-auth-middleware");
 
 // Customer/Staff routes
-router.post("/create", authenticateUser, createOrderValidation, createOrder);
+router.post("/create", createOrderValidation, createOrder);
 router.patch(
   "/:id/items",
   authenticateUser,
   updateOrderItemsValidation,
   updateOrderItems,
 );
-router.get("/table/:tableId/active", authenticateUser, getTableActiveOrders);
+router.get("/table/:id/active", getTableActiveOrders);
 
 // Bulk serve order items (waiter)
 router.patch(
   "/items/bulk-serve",
-  authentication,
-  authorization,
+  // authentication,
+  // authorization,
   bulkServeOrderItemsValidation,
   bulkServeOrderItems,
 );
@@ -50,8 +54,8 @@ router.patch(
 // Department update order items status
 router.patch(
   "/items/status",
-  authentication,
-  authorization,
+  // authentication,
+  // authorization,
   updateOrderItemsStatusValidation,
   updateOrderItemsStatus,
 );
@@ -59,19 +63,36 @@ router.patch(
 // Checkout order (cashier)
 router.patch(
   "/:id/checkout",
-  authentication,
-  authorization,
+  // authentication,
+  // authorization,
+  idValidation,
   checkoutOrderValidation,
   checkoutOrder,
 );
 
 // Admin routes
-router.get("/list", authentication, authorization, listOrders);
-router.get("/:id", authentication, authorization, getOrderById);
+router.get(
+  "/list",
+  //  authentication, authorization,
+  // paginationValidation,
+  listOrders,
+);
+router.get(
+  "/list/order-items",
+  //  authentication, authorization, to do later add in json
+  // paginationValidation,
+  listOrderItems,
+);
+
+router.get("/:id",
+  //  authentication, authorization, 
+  idValidation,
+  getOrderById);
 router.patch(
   "/:id/status",
-  authentication,
-  authorization,
+  // authentication,
+  // authorization,
+  idValidation,
   updateOrderStatusValidation,
   updateOrderStatus,
 );
