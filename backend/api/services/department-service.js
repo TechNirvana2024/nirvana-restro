@@ -147,6 +147,8 @@ const deleteById = async (req) => {
   }
 };
 
+// create service to show the order items only for the department
+// create a service to show the order items which are ready in status
 module.exports = {
   create,
   list,

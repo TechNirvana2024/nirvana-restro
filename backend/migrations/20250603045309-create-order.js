@@ -18,6 +18,15 @@ module.exports = {
         },
         onDelete: "SET NULL",
       },
+      customerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "customers",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+      },
       sessionId: {
         type: Sequelize.UUID,
         allowNull: true,
@@ -30,9 +39,6 @@ module.exports = {
       status: {
         type: Sequelize.ENUM(
           "pending",
-          "confirmed",
-          "preparing",
-          "ready",
           "completed",
           "cancelled",
         ),
@@ -80,22 +86,7 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      customerName: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      customerPhone: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      customerEmail: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      deliveryAddress: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
+     
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
