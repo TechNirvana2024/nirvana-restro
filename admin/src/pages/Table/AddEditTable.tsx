@@ -56,7 +56,7 @@ export default function AddEditTable({
     skip: !isEditMode,
   });
 
-  const { data: floorData } = useGetApiQuery(`${FLOOR_URL}list`);
+  const { data: floorData } = useGetApiQuery({ url: `${FLOOR_URL}list` });
 
   useEffect(() => {
     if (isEditMode && tableData && tableData?.data) {

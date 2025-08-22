@@ -53,9 +53,12 @@ export default function AddEditDepartment({
     data: departmentData,
     isSuccess: success,
     isLoading: loading,
-  } = useGetApiQuery(`${DEPARTMENT_URL}${id}`, {
-    skip: !isEditMode,
-  });
+  } = useGetApiQuery(
+    { url: `${DEPARTMENT_URL}${id}` },
+    {
+      skip: !isEditMode,
+    },
+  );
 
   useEffect(() => {
     if (isEditMode && departmentData && departmentData?.data) {
@@ -143,6 +146,7 @@ export default function AddEditDepartment({
         />
 
         <Input
+          type="color"
           label="Color (Hex Code)"
           placeholder="#FF5722"
           className="w-full md:w-1/2"

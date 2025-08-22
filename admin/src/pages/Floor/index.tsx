@@ -92,51 +92,46 @@ export default function Floor() {
     "Floor No",
     "Name",
     "Status",
-    accessList.includes("view") || accessList.includes("edit") || "Edit",
-    accessList.includes("delete") && "Actions",
+    (accessList.includes("edit") || accessList.includes("delete")) && "Actions",
   ].filter(Boolean);
 
   const tableData =
     success && allFloor?.data?.data
       ? allFloor?.data?.data.map(
-          ({ id, floorNo, name, isActive }: FloorResponseType) =>
-            [
-              floorNo,
-              name,
-              <span
-                key={`status-${id}`}
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  isActive
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {isActive ? "Active" : "Inactive"}
-              </span>,
-              accessList.includes("view") && (
-                <FaEye
-                  size={18}
-                  className="text-[#0090DD] cursor-pointer mx-auto"
-                  onClick={() => handleDrawerOpen(id)}
-                />
-              ),
-              accessList.includes("edit") && (
+          ({ id, floorNo, name, isActive }: FloorResponseType) => [
+            floorNo,
+            name,
+            <span
+              key={`status-${id}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                isActive
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {isActive ? "Active" : "Inactive"}
+            </span>,
+            <div
+              key={id}
+              className="flex items-center justify-center cursor-pointer gap-[0.5rem]"
+            >
+              {accessList.includes("edit") && (
                 <MdEditSquare
-                  key={`edit-${id}`}
                   size={18}
-                  className="text-[#0090DD] cursor-pointer mx-auto"
+                  className="text-[#0090DD]"
                   onClick={() => handleNewButton(id)}
                 />
-              ),
-              accessList.includes("delete") && (
+              )}
+              {accessList.includes("delete") && (
                 <DeleteModal
                   open={open}
                   setOpen={setOpen}
                   handleDeleteTrigger={() => handleDeleteTrigger(id)}
                   handleConfirmDelete={handleDelete}
                 />
-              ),
-            ].filter(Boolean),
+              )}
+            </div>,
+          ],
         )
       : [];
 

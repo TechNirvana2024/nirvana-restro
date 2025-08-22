@@ -51,15 +51,18 @@ export default function AddEditFloor({
     data: floorData,
     isSuccess: success,
     isLoading: loading,
-  } = useGetApiQuery(`${FLOOR_URL}${id}`, {
-    skip: !isEditMode,
-  });
+  } = useGetApiQuery(
+    { url: `${FLOOR_URL}${id}` },
+    {
+      skip: !isEditMode,
+    },
+  );
 
   useEffect(() => {
     if (isEditMode && floorData && floorData?.data) {
       reset(floorData?.data);
     }
-  }, [floorData, isEditMode, reset]);
+  }, [floorData]);
 
   const handleSuccess = () => {
     if (isComponent) {
