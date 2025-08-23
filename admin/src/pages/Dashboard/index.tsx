@@ -52,13 +52,6 @@ export default function Dashboard() {
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { query, handlePagination } = usePagination({ page: 1, limit: 10 });
-
-  const { data: allTables } = useGetApiQuery({
-    url: `${TABLE_URL}list`,
-    ...query,
-  });
-
   console.log(allTables, "all tables");
 
   function handleTableClick(id: number, status: string) {
