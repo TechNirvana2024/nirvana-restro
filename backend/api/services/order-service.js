@@ -339,18 +339,28 @@ const checkoutOrder = async (req) => {
       },
       { transaction },
     );
+//hello
+// if table has other active order than 
+    const stillOrderInTable = await  orderModel.findAll({
+      where: {
+        tableId: tableId,
+        sessionId: table.sessionId,
+        status: { [Op.notIn]: ["completed", "cancelled"] },
+      },
+    });
 
-    await tableModel.update(
-      {
-        status: "available",
-        sessionId: null,
-        sessionStartTime: null,
-      },
-      {
-        where: { id: order.tableId },
-        transaction,
-      },
-    );
+
+    if(stillOrderInTable.length===0){
+    await tableModel.update({
+      status: "available",
+      sessionId: null,
+      sessionStartTime: null,
+    }, {
+      where: { id: order.tableId },
+      transaction,
+    })
+    }
+
     await transaction.commit();
 
     return {
