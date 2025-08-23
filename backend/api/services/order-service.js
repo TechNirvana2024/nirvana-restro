@@ -354,7 +354,7 @@ const checkoutOrder = async (req) => {
       },
       { transaction }
     );
-
+//hello
 // if table has other active order than 
     const stillOrderInTable = await  orderModel.findAll({
       where: {
