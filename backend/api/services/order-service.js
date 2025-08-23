@@ -373,6 +373,7 @@ const checkoutOrder = async (req) => {
         sessionId: order.sessionId,
         status: { [Op.notIn]: ["completed", "cancelled"] },
       },
+      transaction
     });
 
     if (!stillOrderInTable) {
