@@ -26,6 +26,15 @@ const getPartOfDay = (date: Date = new Date()): string => {
 
 export default function Dashboard() {
   const [checkoutTableId, setCheckoutTableId] = useState<number | null>(null);
+
+  const { query, handlePagination } = usePagination({ page: 1, limit: 10 });
+
+  const { data: allTables } = useGetApiQuery({
+    url: `${TABLE_URL}list`,
+    ...query,
+  });
+
+  console.log(allTables, "all tables");
   const [checkoutOrderId, setCheckoutOrderId] = useState<number | null>(null);
 
   function handleCheckout(tableId: number, orderId: number | null) {

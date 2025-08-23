@@ -109,6 +109,11 @@ export default function AddEditOrder({
     url: `/product/list`,
   });
 
+  console.log(productData?.data?.data, "proucts");
+  console.log("orders items length", orderItems.length);
+  console.log("errors", errors);
+  console.log("valid", isValid);
+
   const tableOptions = useMemo(() => {
     if (!tableData?.data) return [];
     return tableData.data.data?.map(
