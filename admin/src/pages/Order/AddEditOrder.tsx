@@ -96,7 +96,10 @@ export default function AddEditOrder({
   }, [currentOrders, currentOrderIsSuccess]);
 
   useEffect(() => {
-    const total = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const total = orderItems.reduce(
+      (sum, item) => sum + Number(item.subtotal),
+      0,
+    );
     setTotalAmount(total);
     setValue("orderItems", orderItems);
   }, [orderItems, setValue]);
