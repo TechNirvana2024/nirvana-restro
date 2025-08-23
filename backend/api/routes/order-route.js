@@ -35,7 +35,7 @@ const authenticateUser = require("../../middlewares/customer-auth-middleware");
 // Customer/Staff routes
 router.post("/create", createOrderValidation, createOrder);
 router.patch(
-  "/:id/items",
+  "/items/:id",
   authenticateUser,
   updateOrderItemsValidation,
   updateOrderItems,
@@ -62,7 +62,7 @@ router.patch(
 
 // Checkout order (cashier)
 router.patch(
-  "/:id/checkout",
+  "/checkout/:id",
   // authentication,
   // authorization,
   idValidation,
@@ -89,7 +89,7 @@ router.get("/:id",
   idValidation,
   getOrderById);
 router.patch(
-  "/:id/status",
+  "/status/:id",
   // authentication,
   // authorization,
   idValidation,

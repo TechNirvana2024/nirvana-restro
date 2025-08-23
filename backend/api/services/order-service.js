@@ -115,8 +115,9 @@ const updateOrderItems = async (req) => {
       await transaction.rollback();
       return { status: 404, success: false, message: "Order not found" };
     }
-
-    for (const incoming of items) {
+   const newItems = items.filter(i => !i.id)
+   const oldItems = items.filter(i=> i.id)
+    for (const incoming of oldItems) {
       const existing = order.orderItems.find((oi) => oi.id === incoming.id);
       if (!existing) {
         await transaction.rollback();
@@ -163,6 +164,32 @@ const updateOrderItems = async (req) => {
           { transaction }
         );
       }
+    }
+    if(newItems.length>0){
+    for (const item of newItems) {
+      const product = await productModel.findByPk(item.productId, {
+        transaction,
+      });
+      if (!product) {
+        await transaction.rollback();
+        return {
+          status: 404,  
+          success: false,
+          message: `Product with ID ${item.productId} not found`,
+        };
+      }
+      const subtotal = product.price * item.quantity;
+      await orderItemModel.create(
+        {
+          ...item,
+          orderId: order.id,
+          price: product.price,
+          departmentId: product.departmentId,
+          subtotal,
+        },
+        { transaction }
+      );
+    }
     }
 
     // Recalculate order total (exclude cancelled)
@@ -328,6 +355,17 @@ const checkoutOrder = async (req) => {
       { transaction }
     );
 
+// if table has other active order than 
+    const stillOrderInTable = await  orderModel.findAll({
+      where: {
+        tableId: tableId,
+        sessionId: table.sessionId,
+        status: { [Op.notIn]: ["completed", "cancelled"] },
+      },
+    });
+
+
+    if(stillOrderInTable.length===0){
     await tableModel.update({
       status: "available",
       sessionId: null,
@@ -336,6 +374,8 @@ const checkoutOrder = async (req) => {
       where: { id: order.tableId },
       transaction,
     })
+    }
+
     await transaction.commit();
 
     return {
@@ -575,7 +615,7 @@ const updateOrderItemsStatus = async (req) => {
   const { status } = req.body; 
 
 
-  const transaction = await sequelize.transaction();
+  const transaction = await sequelize.transaction();  
 
   try {
     const orderItems = await orderItemModel.findAll({
