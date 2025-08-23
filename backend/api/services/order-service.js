@@ -470,7 +470,7 @@ const listOrders = async (req) => {
       {
         model: customerModel,
         as: "customer",
-        attributes: ["id", "username", "email"],
+        attributes: ["id", "email"],
       },
       {
         model: tableModel,
