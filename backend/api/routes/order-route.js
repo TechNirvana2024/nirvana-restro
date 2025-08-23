@@ -66,7 +66,7 @@ router.patch(
 );
 
 // Checkout order (cashier)
-router.patch(
+router.post(
   "/checkout/:id",
   // authentication,
   // authorization,

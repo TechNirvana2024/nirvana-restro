@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { FaMoneyBillWave, FaQrcode } from "react-icons/fa";
 import styles from "./CheckoutModal.module.css";
 import QR_IMAGE from "@/assets/qr-code.png";
-import { useGetApiQuery } from "@/redux/services/crudApi";
+import { useCreateApiMutation, useGetApiQuery } from "@/redux/services/crudApi";
+import { ORDER_URL } from "@/constants/apiUrlConstants";
 
 // Define interfaces
 interface OrderItem {
@@ -64,6 +65,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
   const [totalAmount, setTotalAmount] = useState(null);
 
+  const [checkoutOrderApi] = useCreateApiMutation();
+
   const { data: order } = useGetApiQuery(
     { url: `order/${orderId}` },
     {
@@ -82,7 +85,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const handlePayment = async () => {
     if (paymentType === "cash") {
-      setIsPaymentSuccess(true);
+      const response = await checkoutOrderApi({
+        url: `${ORDER_URL}checkout/${orderId}`,
+        body: { paymentMethod: paymentType },
+      }).unwrap();
+      if (response?.success) {
+        setIsPaymentSuccess(true);
+      }
     }
     setTimeout(() => {
       setIsPaymentSuccess(false);

@@ -224,7 +224,7 @@ const checkoutOrderValidation = async (req, res, next) => {
         phone: joi.string().min(10).max(20).optional(),
       })
       .optional(),
-    paymentMethod: joi.string().valid("cash", "card", "online").optional(),
+    paymentMethod: joi.string().valid("cash", "card", "online"),
     isGuestOrder: joi.boolean().optional(),
   });
   const errors = await validateRequestBody(req, res, joiModel);
