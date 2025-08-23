@@ -115,8 +115,9 @@ const updateOrderItems = async (req) => {
       await transaction.rollback();
       return { status: 404, success: false, message: "Order not found" };
     }
-
-    for (const incoming of items) {
+    const newItems = items.filter((i) => !i.id);
+    const oldItems = items.filter((i) => i.id);
+    for (const incoming of oldItems) {
       const existing = order.orderItems.find((oi) => oi.id === incoming.id);
       if (!existing) {
         await transaction.rollback();
