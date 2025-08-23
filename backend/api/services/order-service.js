@@ -1,6 +1,6 @@
-const { Op} = require("sequelize");
+const { Op } = require("sequelize");
 
-const generateUUID  = require("../../utils/uuidGenerator");
+const { generateUUID } = require("../../utils/uuidGenerator");
 
 const {
   customerModel,
@@ -9,7 +9,7 @@ const {
   productModel,
   tableModel,
   productMediaModel,
-  sequelize
+  sequelize,
 } = require("../../models");
 
 const { withTransaction } = require("../../helpers/order/transaction");
@@ -38,7 +38,7 @@ const createOrder = async (req) => {
             sessionId,
             sessionStartTime: new Date(),
           },
-          { transaction }
+          { transaction },
         );
       } else {
         sessionId = table.sessionId;
@@ -51,7 +51,7 @@ const createOrder = async (req) => {
         sessionId,
         orderStartTime: new Date(),
       },
-      { transaction }
+      { transaction },
     );
 
     let totalAmount = 0;
@@ -80,7 +80,7 @@ const createOrder = async (req) => {
           departmentId: product.departmentId,
           subtotal,
         },
-        { transaction }
+        { transaction },
       );
     }
 
@@ -140,15 +140,21 @@ const updateOrderItems = async (req) => {
           }
           await existing.update(
             { status: "cancelled", subtotal: 0 },
-            { transaction }
+            { transaction },
           );
           continue; // skip quantity check since it's cancelled
         }
       }
 
       // Check for quantity change
-      if (incoming.quantity !== undefined && incoming.quantity !== existing.quantity) {
-        if (incoming.quantity < existing.quantity && existing.status === "preparing") {
+      if (
+        incoming.quantity !== undefined &&
+        incoming.quantity !== existing.quantity
+      ) {
+        if (
+          incoming.quantity < existing.quantity &&
+          existing.status === "preparing"
+        ) {
           await transaction.rollback();
           return {
             status: 400,
@@ -160,7 +166,7 @@ const updateOrderItems = async (req) => {
         const newSubtotal = existing.price * incoming.quantity;
         await existing.update(
           { quantity: incoming.quantity, subtotal: newSubtotal },
-          { transaction }
+          { transaction },
         );
       }
     }
@@ -173,7 +179,7 @@ const updateOrderItems = async (req) => {
 
     const totalAmount = validItems.reduce(
       (sum, item) => sum + Number(item.subtotal),
-      0
+      0,
     );
 
     await order.update({ totalAmount }, { transaction });
@@ -193,11 +199,12 @@ const updateOrderItems = async (req) => {
 };
 
 const getTableActiveOrders = async (req) => {
-  const { id:tableId } = req.params;
+  const { id: tableId } = req.params;
 
   try {
+    console.log(tableId, "====-----------------------------");
     const table = await tableModel.findByPk(tableId);
-
+    console.log(table, "=================");
     if (!table) {
       return { status: 404, success: false, message: "Table not found" };
     }
@@ -207,7 +214,7 @@ const getTableActiveOrders = async (req) => {
         status: 200,
         success: true,
         message: "No active session for this table",
-        data: null
+        data: null,
       };
     }
 
@@ -232,7 +239,7 @@ const getTableActiveOrders = async (req) => {
         {
           model: customerModel,
           as: "customer",
-          attributes: ["id", "username", "email"],
+          attributes: ["id", "email"],
         },
       ],
       order: [["createdAt", "ASC"]],
@@ -297,7 +304,9 @@ const checkoutOrder = async (req) => {
     let finalCustomerId = null;
 
     if (customerId) {
-      const customer = await customerModel.findByPk(customerId, { transaction });
+      const customer = await customerModel.findByPk(customerId, {
+        transaction,
+      });
       if (!customer) {
         await transaction.rollback();
         return { status: 404, success: false, message: "Customer not found" };
@@ -306,7 +315,9 @@ const checkoutOrder = async (req) => {
     }
 
     if (customerDetails) {
-      const newCustomer = await customerModel.create(customerDetails, { transaction });
+      const newCustomer = await customerModel.create(customerDetails, {
+        transaction,
+      });
       if (!newCustomer) {
         await transaction.rollback();
         return {
@@ -325,17 +336,20 @@ const checkoutOrder = async (req) => {
         customerId: finalCustomerId,
         isGuestOrder: req.body?.isGuestOrder ?? false,
       },
-      { transaction }
+      { transaction },
     );
 
-    await tableModel.update({
-      status: "available",
-      sessionId: null,
-      sessionStartTime: null,
-    }, {
-      where: { id: order.tableId },
-      transaction,
-    })
+    await tableModel.update(
+      {
+        status: "available",
+        sessionId: null,
+        sessionStartTime: null,
+      },
+      {
+        where: { id: order.tableId },
+        transaction,
+      },
+    );
     await transaction.commit();
 
     return {
@@ -377,7 +391,7 @@ const getOrderById = async (req) => {
         },
       ],
     });
-
+    console.log(order, "===============");
     if (!order) {
       return { status: 404, success: false, message: "Order not found" };
     }
@@ -390,12 +404,7 @@ const getOrderById = async (req) => {
     };
   } catch (error) {
     console.error("Get order by ID error:", error);
-    return {
-      status: 500,
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    };
+    return error;
   }
 };
 
@@ -430,7 +439,7 @@ const listOrders = async (req) => {
       {
         model: customerModel,
         as: "customer",
-        attributes: ["id", "username", "email"],
+        attributes: ["id", "email"],
       },
       {
         model: tableModel,
@@ -480,12 +489,7 @@ const listOrders = async (req) => {
     };
   } catch (error) {
     console.error("List orders error:", error);
-    return {
-      status: 500,
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    };
+    throw error;
   }
 };
 
@@ -543,19 +547,23 @@ const updateOrderStatus = async (req) => {
 // this is for waiters to mark order items as served
 const bulkServeOrderItems = async (req) => {
   const { orderItemIds } = req.body; // array of orderItem ids
-  
+
   try {
     // fetch order items
     const orderItems = await orderItemModel.findAll({
-      where: { id: orderItemIds ,status: "ready" },
+      where: { id: orderItemIds, status: "ready" },
     });
 
     if (orderItems.length === 0) {
-      return { status: 404, success: false, message: "Order items not found or not ready yet" };
+      return {
+        status: 404,
+        success: false,
+        message: "Order items not found or not ready yet",
+      };
     }
 
     await Promise.all(
-      orderItems.map((item) => item.update({ status: "served" }))
+      orderItems.map((item) => item.update({ status: "served" })),
     );
 
     return {
@@ -565,15 +573,14 @@ const bulkServeOrderItems = async (req) => {
       data: orderItems,
     };
   } catch (error) {
-   throw error
+    throw error;
   }
 };
 
 // this is for departments to update order item status
 const updateOrderItemsStatus = async (req) => {
-  let { orderItemIds } = req.body; 
-  const { status } = req.body; 
-
+  let { orderItemIds } = req.body;
+  const { status } = req.body;
 
   const transaction = await sequelize.transaction();
 
@@ -585,7 +592,11 @@ const updateOrderItemsStatus = async (req) => {
 
     if (!orderItems.length) {
       await transaction.rollback();
-      return { status: 404, success: false, message: "Order item(s) not found" };
+      return {
+        status: 404,
+        success: false,
+        message: "Order item(s) not found",
+      };
     }
 
     const invalidItems = [];
@@ -612,7 +623,8 @@ const updateOrderItemsStatus = async (req) => {
       return {
         status: 400,
         success: false,
-        message: "Some order items could not be updated due to invalid transitions",
+        message:
+          "Some order items could not be updated due to invalid transitions",
         invalidItems,
       };
     }
@@ -630,8 +642,7 @@ const updateOrderItemsStatus = async (req) => {
   }
 };
 
-
-// for waiter , department and all 
+// for waiter , department and all
 const getOrderItems = async (req) => {
   try {
     let { limit, page, status } = req.query;
@@ -674,7 +685,7 @@ module.exports = {
   getOrderById,
   listOrders,
   updateOrderStatus,
-  
+
   // waiter services
   createOrder,
   updateOrderItems,

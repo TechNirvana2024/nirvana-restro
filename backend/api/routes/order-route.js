@@ -32,15 +32,20 @@ const {
 
 const authenticateUser = require("../../middlewares/customer-auth-middleware");
 
+router.get(
+  "/list",
+  //  authentication, authorization,
+  // paginationValidation,
+  listOrders,
+);
 // Customer/Staff routes
-router.post("/create", createOrderValidation, createOrder);
+router.post("/create", authentication, createOrderValidation, createOrder);
 router.patch(
   "/:id/items",
   authenticateUser,
   updateOrderItemsValidation,
   updateOrderItems,
 );
-router.get("/table/:id/active", getTableActiveOrders);
 
 // Bulk serve order items (waiter)
 router.patch(
@@ -71,11 +76,14 @@ router.patch(
 );
 
 // Admin routes
+
+router.get("/active-orders/:id", getTableActiveOrders);
+// add route in json
 router.get(
-  "/list",
-  //  authentication, authorization,
-  // paginationValidation,
-  listOrders,
+  "/active-orders/:tableId",
+  // authenticateUser,
+  // authorization,
+  getTableActiveOrders,
 );
 router.get(
   "/list/order-items",
@@ -84,10 +92,12 @@ router.get(
   listOrderItems,
 );
 
-router.get("/:id",
-  //  authentication, authorization, 
+router.get(
+  "/:id",
+  //  authentication, authorization,
   idValidation,
-  getOrderById);
+  getOrderById,
+);
 router.patch(
   "/:id/status",
   // authentication,

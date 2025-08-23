@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaMoneyBillWave, FaQrcode } from "react-icons/fa";
 import styles from "./CheckoutModal.module.css";
 import QR_IMAGE from "@/assets/qr-code.png";
+import { useGetApiQuery } from "@/redux/services/crudApi";
 
 // Define interfaces
 interface OrderItem {
@@ -49,28 +50,47 @@ interface Table {
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  table: Table | undefined;
-  order: Order | undefined;
+  tableId: number;
+  orderId: number | null;
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
-  table,
-  order,
+  tableId,
+  orderId,
 }) => {
   const [paymentType, setPaymentType] = useState<"cash" | "qr">("cash");
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(null);
 
-  const handlePayment = () => {
-    setIsPaymentSuccess(true);
+  const { data: order } = useGetApiQuery(
+    { url: `order/${orderId}` },
+    {
+      skip: orderId === null || orderId === undefined,
+    },
+  );
+  const { data: table } = useGetApiQuery(
+    { url: `table/${tableId}` },
+    {
+      skip: orderId === null || orderId === undefined,
+    },
+  );
+
+  console.log(order, "checkout order ----------------------");
+  console.log(table, "checkout order ----------------------");
+
+  const handlePayment = async () => {
+    if (paymentType === "cash") {
+      setIsPaymentSuccess(true);
+    }
     setTimeout(() => {
       setIsPaymentSuccess(false);
       onClose();
     }, 2000); // Close modal after 2 seconds
   };
 
-  if (!isOpen || !table || !order) return null;
+  if (!isOpen) return null;
 
   return (
     <div className={styles.modalOverlay}>
@@ -102,10 +122,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         ) : (
           <>
             <h2 className={styles.modalTitle}>
-              Checkout for Table {table.tableNo}
+              Checkout for Table {order?.data?.table?.tableNo}
             </h2>
             <p className={styles.totalAmount}>
-              Total Amount: ${order.totalAmount.toFixed(2)}
+              Total Amount: ${order?.data?.totalAmount}
             </p>
             <div className={styles.paymentOptions}>
               <p className={styles.paymentLabel}>Select Payment Type:</p>

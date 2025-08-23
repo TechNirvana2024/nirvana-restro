@@ -58,6 +58,7 @@ const getTableActiveOrders = async (req, res, next) => {
 
 const getOrderById = async (req, res, next) => {
   try {
+    console.log("++++++++++++++++++++++==");
     const result = await orderService.getOrderById(req);
     return responseHelper.sendResponse(
       res,
@@ -192,5 +193,4 @@ module.exports = {
   bulkServeOrderItems,
   updateOrderItemsStatus,
   checkoutOrder,
-
 };

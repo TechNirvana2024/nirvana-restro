@@ -138,7 +138,11 @@ export const adminLinks = [
     element: <AddEditOrder />,
   },
   {
-    path: "/order/:id",
+    path: "/order/:tableId/:orderId",
+    element: <AddEditOrder />,
+  },
+  {
+    path: "/order/:tableId",
     element: <AddEditOrder />,
   },
   {
