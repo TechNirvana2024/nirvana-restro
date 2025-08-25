@@ -16,6 +16,8 @@ import {
 } from "@/redux/services/crudApi";
 import { FLOOR_URL, CUSTOMER_URL } from "@/constants/apiUrlConstants";
 import PageTitle from "@/components/PageTitle";
+import { useEffect } from "react";
+import { isValid } from "date-fns";
 
 type CustomerFormType = z.infer<typeof CustomerSchema>;
 
@@ -39,13 +41,24 @@ export default function AddEditCustomer({
     handleSubmit,
     setError,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<CustomerFormType>({
     resolver: zodResolver(CustomerSchema),
   });
 
   const [createUser, { isLoading: creatingUser }] = useCreateApiMutation();
   const [updateUser, { isLoading: updatingUser }] = useUpdateApiMutation();
+
+  const {
+    data: customerData,
+    isSuccess: success,
+    isLoading: loading,
+  } = useGetApiQuery(
+    { url: `${CUSTOMER_URL}${id}` },
+    {
+      skip: !isEditMode,
+    },
+  );
 
   const handleSuccess = () => {
     if (isComponent) {
@@ -54,6 +67,8 @@ export default function AddEditCustomer({
       navigate(CUSTOMER_LIST_ROUTE);
     }
   };
+
+  console.log("data", errors, isValid);
 
   const onSubmit = async (data: CustomerFormType) => {
     const body = { ...data };
@@ -77,6 +92,18 @@ export default function AddEditCustomer({
       handleError({ error, setError });
     }
   };
+
+  useEffect(() => {
+    if (isEditMode && customerData && customerData?.data) {
+      console.log(customerData?.data, "custoemr id data");
+      reset({
+        firstName: customerData?.data.firstName,
+        lastName: customerData?.data.lastName,
+        email: customerData?.data.email,
+        mobileNo: customerData?.data.mobileNo,
+      });
+    }
+  }, [customerData, isEditMode, reset]);
 
   return (
     <>

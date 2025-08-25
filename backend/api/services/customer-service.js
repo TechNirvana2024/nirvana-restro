@@ -1,4 +1,4 @@
-const { customerModel } = require("../../models");
+const { customerModel, orderModel } = require("../../models");
 const paginate = require("../../utils/paginate");
 
 const create = async (req) => {

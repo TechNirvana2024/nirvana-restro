@@ -131,6 +131,10 @@ export const adminLinks = [
     element: <Customer />,
   },
   {
+    path: "/customer/:id",
+    element: <AddEditCustomer />,
+  },
+  {
     path: "/customer/",
     element: <AddEditCustomer />,
   },
