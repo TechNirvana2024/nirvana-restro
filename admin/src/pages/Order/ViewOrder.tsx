@@ -1,7 +1,9 @@
 import Button from "@/components/Button";
 import PageTitle from "@/components/PageTitle";
 import { CurrencySign, IMAGE_BASE_URL } from "@/constants";
-import { useGetApiQuery } from "@/redux/services/crudApi";
+import { ORDER_URL } from "@/constants/apiUrlConstants";
+import { useGetApiQuery, usePatchApiMutation } from "@/redux/services/crudApi";
+import { handleError, handleResponse } from "@/utils/responseHandler";
 import { SetStateAction } from "react";
 
 type ViewCustomerProps = {
@@ -25,6 +27,31 @@ export default function ViewOrder({
       skip: id === null || id === undefined,
     },
   );
+
+  const statusOptions = [
+    "pending",
+    "preparing",
+    "ready",
+    "served",
+    "cancelled",
+  ];
+
+  const [patchStatus] = usePatchApiMutation();
+
+  async function handleStatusUpdate(status: string, id: number) {
+    try {
+      const response = await patchStatus({
+        url: `${ORDER_URL}items/status`,
+        body: { status, orderItemIds: id },
+      }).unwrap();
+      handleResponse({
+        res: response,
+        onSuccess: () => {},
+      });
+    } catch (error) {
+      handleError({ error });
+    }
+  }
 
   console.log(orderData, "this is order data");
 
@@ -78,7 +105,17 @@ export default function ViewOrder({
                   )}
                   <p>
                     <span className="font-medium">Status:</span>{" "}
-                    <span className="capitalize">{item.status}</span>
+                    <select
+                      className="w-40 p-2 text-base bg-white focus:outline-none focus:border-blue-500 transition-colors"
+                      value={item?.status}
+                      onChange={(e) => handleStatusUpdate(e.target.value, id)}
+                    >
+                      {statusOptions.map((option) => (
+                        <option className="text-center" value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   </p>
                   {item.department && (
                     <p>
