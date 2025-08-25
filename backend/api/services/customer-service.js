@@ -1,4 +1,5 @@
-const {customerModel} = require("../../models")
+const { customerModel } = require("../../models");
+const paginate = require("../../utils/paginate");
 
 const create = async (req) => {
   try {
@@ -88,7 +89,7 @@ const updateById = async (req) => {
   try {
     const result = await customerModel.findByPk(+req.params.id);
     if (!result) {
-    return {
+      return {
         status: 404,
         success: false,
         message: `Customer Not Found`,
@@ -106,11 +107,11 @@ const updateById = async (req) => {
       };
     }
     return {
-        status: 200,
-        success: true,
-        message: `Customer create success`,
-        data: null,
-      };
+      status: 200,
+      success: true,
+      message: `Customer create success`,
+      data: null,
+    };
   } catch (error) {
     throw error;
   }
@@ -130,22 +131,22 @@ const deleteById = async (req) => {
 
     const deleted = await result.destroy();
     if (!deleted) {
-     return {
+      return {
         status: 500,
         success: false,
         message: `Customer Not Deleted`,
         data: null,
       };
     }
-     return {
-        status: 200,
-        success: true,
-        message: `Customer Deleted Successfully`,
-        data: null,
-      };
+    return {
+      status: 200,
+      success: true,
+      message: `Customer Deleted Successfully`,
+      data: null,
+    };
   } catch (error) {
     throw error;
   }
 };
 
-module.exports={create,getById,list,deleteById,updateById}
+module.exports = { create, getById, list, deleteById, updateById };

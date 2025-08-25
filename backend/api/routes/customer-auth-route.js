@@ -4,7 +4,8 @@ const {
   paginationValidation,
 } = require("../../validations/common-validation");
 const {
-createValidation,updateValidation
+  createValidation,
+  updateValidation,
 } = require("../../validations/customer-auth-validation");
 const {
   authentication,
@@ -13,14 +14,18 @@ const {
 
 const router = require("express").Router();
 const {
-create,deleteData,getById,list,update
+  create,
+  deleteData,
+  getById,
+  list,
+  update,
 } = require("../controllers/customer-controller");
 
-router.get(
+router.post(
   "/create",
   // authentication,
   // authorization,
-createValidation,
+  // createValidation,
   create,
 );
 
