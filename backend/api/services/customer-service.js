@@ -120,7 +120,7 @@ const updateById = async (req) => {
 const deleteById = async (req) => {
   try {
     const result = await customerModel.findByPk(+req.params.id);
-    if (!faq) {
+    if (!result) {
       return {
         status: 404,
         success: false,
